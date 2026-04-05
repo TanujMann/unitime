@@ -48,7 +48,17 @@ self.addEventListener('push', event => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      const isVisible = clients.some(client => client.visibilityState === 'visible');
+      if (isVisible) {
+        clients.forEach(client => client.postMessage({
+          action: 'SHOW_IN_APP_NOTIF',
+          payload: data
+        }));
+        return null;
+      }
+      return self.registration.showNotification(data.title, options);
+    })
   );
 });
 
@@ -123,32 +133,46 @@ function checkLocal() {
 
 function fireLocal(r) {
   const isUrgent = r.urgency === 'urgent';
-  if (r.type === 'class') {
-    self.registration.showNotification(
-      isUrgent ? '\u{1F534} ' + r.subject + ' \u2014 Starting NOW!' : '\u23F0 ' + r.subject + ' in ' + r.minsLeft + ' min',
-      {
-        body: (r.room ? '\u{1F4CD} ' + r.room : '') + (r.prof ? ' \u00B7 ' + r.prof : ''),
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+    const isVisible = clients.some(client => client.visibilityState === 'visible');
+    
+    if (r.type === 'class') {
+      const title = isUrgent ? '\u{1F6A8} ' + r.subject + ' \u2014 Starting NOW!' : '\u2728 ' + r.subject + ' in ' + r.minsLeft + ' min';
+      const body = (r.room ? '\u{1F4CD} ' + r.room : '') + (r.prof ? ' \u00B7 ' + r.prof : '');
+      const options = {
+        body,
         tag: 'unitime-class-' + r.subject + '-' + r.minsLeft,
         renotify: true,
         requireInteraction: isUrgent,
         vibrate: isUrgent ? [200,80,200,80,400] : [100,50,100],
-        data: { type: 'class' },
+        data: { type: 'class', subject: r.subject },
         actions: [{ action: 'open', title: 'Open App' }, { action: 'dismiss', title: 'Dismiss' }]
+      };
+      
+      if (isVisible) {
+        clients.forEach(client => client.postMessage({ action: 'SHOW_IN_APP_NOTIF', payload: { title, body, originalData: r, urgent: isUrgent, data: options.data } }));
+        return;
       }
-    ).catch(() => {});
-  } else {
-    const isNow = r.minsLeft <= 0;
-    self.registration.showNotification(
-      isNow ? '\u{1F534} ' + r.title + ' \u2014 Due NOW!' : '\u23F0 ' + r.title + ' in ' + r.minsLeft + ' min',
-      {
-        body: (r.subject ? '\u{1F4DA} ' + r.subject + '\n' : '') + 'Priority: ' + (r.pri === 'h' ? 'High' : r.pri === 'l' ? 'Low' : 'Medium'),
+      self.registration.showNotification(title, options).catch(() => {});
+    } else {
+      const isNow = r.minsLeft <= 0;
+      const title = isNow ? '\u{1F6A8} ' + r.title + ' \u2014 Due NOW!' : '\u2728 ' + r.title + ' in ' + r.minsLeft + ' min';
+      const body = (r.subject ? '\u{1F4DA} ' + r.subject + '\n' : '') + 'Priority: ' + (r.pri === 'h' ? 'High' : r.pri === 'l' ? 'Low' : 'Medium');
+      const options = {
+        body,
         tag: 'unitime-task-' + (r.title || '') + '-' + r.minsLeft,
         renotify: true,
         requireInteraction: isNow,
         vibrate: isNow ? [200,80,200,80,400] : [100,50,100],
-        data: { type: 'task' },
+        data: { type: 'task', title: r.title },
         actions: [{ action: 'open', title: 'Open App' }, { action: 'dismiss', title: 'Dismiss' }]
+      };
+      
+      if (isVisible) {
+        clients.forEach(client => client.postMessage({ action: 'SHOW_IN_APP_NOTIF', payload: { title, body, originalData: r, urgent: isNow, data: options.data } }));
+        return;
       }
-    ).catch(() => {});
-  }
+      self.registration.showNotification(title, options).catch(() => {});
+    }
+  });
 }
