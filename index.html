@@ -266,14 +266,17 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .tchk.done{background:var(--green);border-color:var(--green)}
 .tchk svg{display:none;width:12px;height:12px;color:#fff}
 .tchk.done svg{display:block}
-.ti-body{flex:1}
-.ti-t{font-size:15px;font-weight:800}
+.ti-body{flex:1;min-width:0}
+.ti-t{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ti-t.done{text-decoration:line-through;color:var(--text3)}
 .ti-m{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:5px;font-size:12px;color:var(--text2);font-weight:700}
 .ptag{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
 .ph{background:#fff0f5;color:var(--pink)}
 .pm{background:#fff8e6;color:#e07b00}
 .pl{background:#e8fdf0;color:var(--green)}
+.ti-acts{display:flex;flex-direction:column;gap:6px;margin-left:8px}
+.ti-btn{background:var(--bg);border:none;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:.15s}
+.ti-btn:active{transform:scale(.92)}
 .add-task-row{margin:0 20px 12px;background:var(--white);border:1.5px dashed rgba(91,79,207,.3);border-radius:var(--r);padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:14px;font-weight:800;color:var(--violet);box-shadow:var(--sh);transition:.15s}
 .add-task-row:active{background:var(--vl)}
 
@@ -324,7 +327,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 
 /* ── PREMIUM IN-APP NOTIFICATION BANNER ── */
 .duo-notif{
-  position:fixed;top:-180px;left:50%;transform:translateX(-50%);
+  position:fixed;top:-350px;left:50%;transform:translateX(-50%);
   width:calc(100% - 24px);max-width:396px;
   background:rgba(22, 22, 34, 0.85); /* Deep dark glass */
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
@@ -334,8 +337,9 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   z-index:9999;transition:top .6s cubic-bezier(.34, 1.56, .64, 1);
   overflow:hidden;
   color:#fff;
+  pointer-events: none;
 }
-.duo-notif.show{top:calc(env(safe-area-inset-top,0px) + 16px)}
+.duo-notif.show{top:calc(env(safe-area-inset-top,0px) + 16px); pointer-events: auto;}
 /* Glowing animated top border / streak */
 .duo-notif-streak{
   height:4px;width:100%;
@@ -460,7 +464,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 <div id="s-splash" class="screen active">
   <div class="splash-inner">
     <div class="app-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
     </div>
     <div>
       <div class="app-name">Uni<span>Time</span> AI</div>
@@ -2024,7 +2028,7 @@ function mkT(t){
     <div class="tchk ${t.done?'done':''}" onclick="toggleTask(${t.id})">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="ti-body">
+    <div class="ti-body" onclick="toggleTask(${t.id})">
       <div class="ti-t ${t.done?'done':''}">${t.title}</div>
       <div class="ti-m">
         ${t.subject?`<span>📚 ${t.subject}</span>`:''}
@@ -2032,6 +2036,10 @@ function mkT(t){
         ${t.time?`<span>⏰ ${to12h(t.time)}</span>`:''}
         <span class="ptag ${pc}">${pl}</span>
       </div>
+    </div>
+    <div class="ti-acts">
+      <button class="ti-btn" onclick="editTask(${t.id}, event)" title="Edit">✏️</button>
+      <button class="ti-btn" onclick="deleteTask(${t.id}, event)" title="Delete" style="color:var(--red)">🗑️</button>
     </div>`;
   return d;
 }
@@ -2042,16 +2050,68 @@ function toggleTask(id){
   LS.set('tasks',TASKS);renderTasks();
   toast(t.done?'✅ Task done! +20 XP':'↩️ Task reopened');
 }
-function openModal(){populateTaskSubjects();Q('#taskModal').classList.add('show');}
+function openModal(){
+  populateTaskSubjects();
+  Q('#tTitle').value='';
+  Q('#tDue').value='';
+  Q('#tTime').value='';
+  Q('#tPri').value='m';
+  delete window.editingTaskId;
+  Q('#taskModal').classList.add('show');
+}
 function closeModal(id,e){if(e.target===Q('#'+id)) Q('#'+id).classList.remove('show');}
+
+function editTask(id, e) {
+  e.stopPropagation();
+  const t = TASKS.find(x => x.id === id);
+  if(!t) return;
+  populateTaskSubjects();
+  Q('#tTitle').value = t.title;
+  Q('#tSubject').value = t.subject || '';
+  Q('#tDue').value = t.due || '';
+  Q('#tTime').value = t.time || '';
+  Q('#tPri').value = t.pri || 'm';
+  window.editingTaskId = id;
+  Q('#taskModal').classList.add('show');
+}
+
+function deleteTask(id, e) {
+  e.stopPropagation();
+  if(!confirm("Are you sure you want to delete this task?")) return;
+  const idx = TASKS.findIndex(x => x.id === id);
+  if(idx > -1) {
+    if(!TASKS[idx].done && XP >= 5) { XP -= 5; LS.set('xp', XP); } // penalize deleting pending task slightly
+    TASKS.splice(idx, 1);
+    LS.set('tasks', TASKS);
+    renderTasks();
+    toast('🗑️ Task deleted');
+  }
+}
+
 function saveTask(){
   const title=Q('#tTitle').value.trim();
   if(!title){toast('Enter a task title');return;}
-  TASKS.push({id:Date.now(),title,subject:Q('#tSubject').value.trim(),due:Q('#tDue').value||'',time:Q('#tTime').value||'',pri:Q('#tPri').value,done:false});
-  LS.set('tasks',TASKS);renderTasks();scheduleTaskReminders();
+  
+  if (window.editingTaskId) {
+    const t = TASKS.find(x => x.id === window.editingTaskId);
+    if(t) {
+      t.title = title;
+      t.subject = Q('#tSubject').value.trim();
+      t.due = Q('#tDue').value || '';
+      t.time = Q('#tTime').value || '';
+      t.pri = Q('#tPri').value;
+    }
+    toast('✏️ Task updated!');
+  } else {
+    TASKS.push({id:Date.now(),title,subject:Q('#tSubject').value.trim(),due:Q('#tDue').value||'',time:Q('#tTime').value||'',pri:Q('#tPri').value,done:false});
+    toast('✅ Task added!');
+  }
+  
+  LS.set('tasks',TASKS);
+  renderTasks();
+  scheduleTaskReminders();
   Q('#taskModal').classList.remove('show');
   Q('#tTitle').value='';Q('#tDue').value='';Q('#tTime').value='';
-  toast('✅ Task added!');
 }
 
 // ── (Chat removed — replaced by Notes) ──
