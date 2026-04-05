@@ -980,7 +980,14 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 // ── STORAGE ──
 const LS={
   get:(k,d=null)=>{try{const v=localStorage.getItem('ut_'+k);return v!==null?JSON.parse(v):d;}catch{return d;}},
-  set:(k,v)=>{try{localStorage.setItem('ut_'+k,JSON.stringify(v));}catch{}},
+  set:(k,v)=>{
+    try{
+      localStorage.setItem('ut_'+k,JSON.stringify(v));
+      if((k==='tasks'||k==='timetable') && typeof syncScheduleToPushServer === 'function') {
+        syncScheduleToPushServer();
+      }
+    }catch{}
+  },
   del:(k)=>{try{localStorage.removeItem('ut_'+k);}catch{}}
 };
 
