@@ -461,7 +461,15 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .zen-overlay.active { display:flex; }
 .zen-title { font-size:32px; font-weight:900; margin-bottom:6px; color:var(--violet); display:flex; align-items:center; gap:10px; }
 .zen-sub { font-size:16px; color:rgba(255,255,255,0.6); margin-bottom:40px; font-weight:600; text-align:center; padding:0 20px;}
-.zen-timer { font-size:90px; font-weight:900; font-family:'Inter', 'Nunito', sans-serif; letter-spacing:2px; margin-bottom:60px; text-shadow:0 0 30px rgba(91,79,207,0.5); }
+.zen-timer { font-size:90px; font-weight:900; font-family:'Inter', 'Nunito', sans-serif; letter-spacing:2px; margin-bottom:40px; text-shadow:0 0 30px rgba(91,79,207,0.5); }
+.lofi-player { display:flex; flex-direction:column; gap:16px; background:rgba(255,255,255,0.04); padding:20px 24px; border-radius:24px; border:1px solid rgba(255,255,255,0.08); margin-bottom:30px; width:300px; max-width:90vw;backdrop-filter:blur(10px) }
+.lofi-info { display:flex; justify-content:space-between; align-items:center; }
+.lofi-title { font-size:14px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px; }
+.lofi-status { font-size:11px; color:rgba(255,255,255,0.5); font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+.lofi-controls { display:flex; align-items:center; gap:16px; }
+.lofi-play { width:46px; height:46px; border-radius:50%; background:var(--violet); color:#fff; border:none; font-size:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:0.2s; box-shadow:0 8px 20px rgba(91,79,207,0.3); }
+.lofi-play:active { transform:scale(0.92); }
+.lofi-vol { flex:1; accent-color:var(--violet); height:4px; border-radius:2px; background:rgba(255,255,255,0.1); outline:none; }
 .zen-exit { padding:14px 28px; border-radius:20px; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.8); font-size:14px; font-weight:800; border:none; cursor:pointer; transition:0.2s; }
 .zen-exit:active { transform:scale(0.95); background:rgba(255,255,255,0.15); }
 </style>
@@ -1043,6 +1051,19 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   <div class="zen-title">🧘 Zen Mode</div>
   <div class="zen-sub">Stay focused. If you quit or close the app, you lose your reward.</div>
   <div class="zen-timer" id="zenTimer">25:00</div>
+  
+  <div class="lofi-player">
+    <div class="lofi-info">
+      <div class="lofi-title">🎧 Lo-Fi Study Beats</div>
+      <div class="lofi-status" id="lofiStatus">Paused</div>
+    </div>
+    <div class="lofi-controls">
+      <button class="lofi-play" id="lofiPlayBtn" onclick="toggleLofi()">▶</button>
+      <input type="range" id="lofiVolume" class="lofi-vol" min="0" max="1" step="0.05" value="0.7" onchange="changeLofiVolume(this.value)" oninput="changeLofiVolume(this.value)"/>
+    </div>
+    <audio id="lofiAudio" src="https://lofi.stream.laut.fm/lofi" preload="none"></audio>
+  </div>
+
   <button class="zen-exit" onclick="exitZenMode()">Quit (Lose XP)</button>
 </div>
 
@@ -3671,7 +3692,36 @@ function exitZenMode(){
   if(confirm("Exit Zen Mode? You will lose out on the XP reward!")){
     clearInterval(zenInterval);
     Q('#zenOverlay').classList.remove('active');
+    const bgm=Q('#lofiAudio');
+    if(bgm && !bgm.paused) toggleLofi();
   }
+}
+
+// ── LOFI PLAYER ──
+function toggleLofi() {
+  const audio = Q('#lofiAudio');
+  const btn = Q('#lofiPlayBtn');
+  const status = Q('#lofiStatus');
+  if(!audio) return;
+  if(audio.paused) {
+    audio.play().then(() => {
+      btn.innerHTML = '⏸';
+      status.textContent = 'Playing';
+      status.style.color = '#06C270';
+    }).catch(e => {
+      console.warn("Audio play failed:", e);
+      toast("Could not play audio. Check connection.");
+    });
+  } else {
+    audio.pause();
+    btn.innerHTML = '▶';
+    status.textContent = 'Paused';
+    status.style.color = 'rgba(255,255,255,0.5)';
+  }
+}
+function changeLofiVolume(val) {
+  const audio = Q('#lofiAudio');
+  if(audio) audio.volume = val;
 }
 
 // ── SWIPE NAVIGATION GESTURES ──
