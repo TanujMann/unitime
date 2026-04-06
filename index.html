@@ -999,6 +999,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   <div class="nd-header">
     <button class="nd-back" onclick="closeNoteDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="nd-title" id="ndTitle"></div>
+    <button class="nd-back" id="ndEditBtn" style="color:var(--violet)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
   </div>
   <div class="nd-meta" id="ndMeta"></div>
   <img class="nd-img" id="ndImg" style="display:none"/>
@@ -2201,7 +2202,13 @@ function renderNotes(){
     const timeStr=new Date(n.id).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
     const preview=n.content.length>150?n.content.slice(0,150)+'…':n.content;
     d.innerHTML=`
-      <div class="nc-top"><div class="nc-title">${n.title}</div><button class="nc-del" onclick="event.stopPropagation();deleteNote(${n.id})">🗑️</button></div>
+      <div class="nc-top">
+        <div class="nc-title">${n.title}</div>
+        <div style="display:flex;gap:4px">
+          <button class="nc-del" onclick="event.stopPropagation();editNote(${n.id})">✏️</button>
+          <button class="nc-del" onclick="event.stopPropagation();deleteNote(${n.id})">🗑️</button>
+        </div>
+      </div>
       ${n.image?`<img class="nc-img" src="${n.image}" alt="note image"/>`:'' }
       <div class="nc-body">${preview}</div>
       <div class="nc-meta">
@@ -2218,7 +2225,30 @@ function openNoteModal(){
   Q('#nTitle').value='';Q('#nContent').value='';
   const preview=Q('#noteImgPreview');if(preview){preview.style.display='none';preview.src='';}
   _noteImgData=null;
+  window.editingNoteId = null;
   Q('#noteModal').classList.add('show');
+}
+
+function editNote(id){
+  const n = NOTES.find(x => x.id === id);
+  if(!n) return;
+  populateNoteSubjects();
+  Q('#nTitle').value = n.title || '';
+  Q('#nContent').value = n.content || '';
+  Q('#nSubject').value = n.subject || '';
+  const preview = Q('#noteImgPreview');
+  if(n.image) {
+    _noteImgData = n.image;
+    preview.src = n.image;
+    preview.style.display = 'block';
+  } else {
+    _noteImgData = null;
+    preview.style.display = 'none';
+    preview.src = '';
+  }
+  window.editingNoteId = id;
+  Q('#noteModal').classList.add('show');
+  closeNoteDetail();
 }
 
 function previewNoteImg(e){
@@ -2373,9 +2403,8 @@ function cleanOCRText(data) {
 async function scanNoteImg(e){
   const file=e.target.files[0];if(!file)return;e.target.value='';
   const status=Q('#noteScanStatus');
-  if(status){status.style.display='block';status.textContent='\ud83d\udd0d Preprocessing image for better accuracy...';}
+  if(status){status.style.display='block';status.textContent='\ud83d\udd0d Preparing image...';}
   try{
-    if(typeof Tesseract==='undefined') throw new Error('OCR engine not loaded \u2014 check internet and refresh');
     // Attach the original image as preview
     const reader2=new FileReader();
     reader2.onload=ev2=>{
@@ -2393,25 +2422,36 @@ async function scanNoteImg(e){
     };
     reader2.readAsDataURL(file);
 
-    // Step 1: Preprocess image for better OCR
-    if(status) status.textContent='\ud83d\udd0d Enhancing image quality...';
-    const processedBlob = await preprocessImageForOCR(file);
+    let text = "";
+    if (getApiKey()) {
+      if(status) status.textContent='\ud83d\udd0d Gemini AI scanning text...';
+      const base64 = await fileToBase64(file);
+      const ext = file.name.split('.').pop().toLowerCase();
+      const mediaType = file.type || (ext === 'pdf' ? 'application/pdf' : 'image/jpeg');
+      const prompt = "Please transcribe the handwritten or printed text in this note as accurately as possible. Output ONLY the transcribed text. Do not add any conversational filler. Maintain line breaks and formatting.";
+      text = await callGeminiWithImage(base64, mediaType, prompt);
+    } else {
+      if(typeof Tesseract==='undefined') throw new Error('OCR engine not loaded \u2014 check internet and refresh');
+      // Step 1: Preprocess image for better OCR
+      if(status) status.textContent='\ud83d\udd0d Enhancing image quality...';
+      const processedBlob = await preprocessImageForOCR(file);
 
-    // Step 2: Run OCR on preprocessed image
-    if(status) status.textContent='\ud83d\udd0d Running OCR on enhanced image...';
-    const {data}=await Tesseract.recognize(processedBlob,'eng',{
-      logger:m=>{
-        if(m.status==='recognizing text'&&status){
-          status.textContent='\ud83d\udd0d Recognizing text... '+Math.round(m.progress*100)+'%';
+      // Step 2: Run OCR on preprocessed image
+      if(status) status.textContent='\ud83d\udd0d Running Tesseract OCR...';
+      const {data}=await Tesseract.recognize(processedBlob,'eng',{
+        logger:m=>{
+          if(m.status==='recognizing text'&&status){
+            status.textContent='\ud83d\udd0d Recognizing text... '+Math.round(m.progress*100)+'%';
+          }
+          if(m.status==='loading language traineddata'&&status){
+            status.textContent='\ud83d\udce5 Loading OCR engine (one-time)...';
+          }
         }
-        if(m.status==='loading language traineddata'&&status){
-          status.textContent='\ud83d\udce5 Loading OCR engine (one-time)...';
-        }
-      }
-    });
+      });
 
-    // Step 3: Clean up OCR text with confidence filtering
-    const text = cleanOCRText(data);
+      // Step 3: Clean up OCR text with confidence filtering
+      text = cleanOCRText(data);
+    }
 
     if(!text||text.length<3){
       if(status){status.textContent='\u274c Could not read text. Try a clearer, well-lit photo.';setTimeout(()=>{status.style.display='none';},3000);}
@@ -2429,9 +2469,8 @@ async function scanNoteImg(e){
       titleEl.value=(firstLine||'').trim().slice(0,50)||'Scanned Note';
     }
     const wordCount = text.split(/\s+/).filter(Boolean).length;
-    const avgConf = data.words?.length ? Math.round(data.words.reduce((s,w) => s+(w.confidence||0), 0) / data.words.length) : 0;
-    if(status){status.textContent='\u2705 Extracted '+wordCount+' words ('+avgConf+'% avg confidence)';setTimeout(()=>{status.style.display='none';},5000);}
-    toast('\u2705 OCR: '+wordCount+' words extracted ('+avgConf+'% confidence)');
+    if(status){status.textContent='\u2705 Extracted '+wordCount+' words';setTimeout(()=>{status.style.display='none';},5000);}
+    toast('\u2705 OCR: '+wordCount+' words extracted');
   }catch(err){
     console.error('Note OCR error:',err);
     if(status){status.textContent='\u274c '+(err.message||'Scan failed');setTimeout(()=>{status.style.display='none';},3000);}
@@ -2442,19 +2481,32 @@ function saveNote(){
   const title=Q('#nTitle').value.trim();
   const content=Q('#nContent').value.trim();
   if(!title&&!content){toast('Enter a title or content');return;}
-  NOTES.push({
-    id:Date.now(),
-    title:title||'Untitled Note',
-    content:content,
-    subject:Q('#nSubject').value.trim(),
-    image:_noteImgData||null
-  });
+  
+  if (window.editingNoteId) {
+    const n = NOTES.find(x => x.id === window.editingNoteId);
+    if(n) {
+      n.title = title || 'Untitled Note';
+      n.content = content;
+      n.subject = Q('#nSubject').value.trim();
+      n.image = _noteImgData || null;
+    }
+    toast('✏️ Note updated!');
+  } else {
+    NOTES.push({
+      id:Date.now(),
+      title:title||'Untitled Note',
+      content:content,
+      subject:Q('#nSubject').value.trim(),
+      image:_noteImgData||null
+    });
+    XP+=5;LS.set('xp',XP);
+    toast('📝 Note saved! +5 XP');
+  }
   LS.set('notes',NOTES);
   Q('#noteModal').classList.remove('show');
   _noteImgData=null;
+  window.editingNoteId = null;
   renderNotes();buildNoteFilters();
-  XP+=5;LS.set('xp',XP);
-  toast('📝 Note saved! +5 XP');
 }
 
 function deleteNote(id){
@@ -2478,6 +2530,7 @@ function openNoteDetail(id){
   const img=Q('#ndImg');
   if(n.image){img.src=n.image;img.style.display='block';}else{img.style.display='none';}
   Q('#ndBody').textContent=n.content;
+  const editBtn=Q('#ndEditBtn'); if(editBtn) editBtn.onclick = () => editNote(id);
   Q('#noteDetail').classList.add('show');
 }
 
