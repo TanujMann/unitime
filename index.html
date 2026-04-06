@@ -611,6 +611,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <div class="cnt-box"><div class="cnt-n" id="cm">00</div><div class="cnt-l">MIN</div></div>
         <div class="cnt-box"><div class="cnt-n" id="cs">00</div><div class="cnt-l">SEC</div></div>
       </div>
+      <div id="nc-att-btns" style="display:none; gap:8px; margin-top:14px">
+        <button class="att-btn p" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="markHomeAtt('p')">✅ Present</button>
+        <button class="att-btn a" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="markHomeAtt('a')">❌ Absent</button>
+      </div>
     </div>
     <!-- Stats grid -->
     <div class="stat4">
@@ -1376,12 +1380,24 @@ function tick(){
     st('#nc-subject',next.subject);
     st('#nc-room',next.room||'');
     si('#nc-meta',`<span>🕐 ${next.time} – ${getEndTime(next.time)}</span><span>👤 ${next.prof||'Instructor'}</span>`);
+    
+    // Show attendance buttons for home screen if not marked yet
+    window._markedHomeClasses = window._markedHomeClasses || new Set();
+    const classKey = today + next.time + next.subject;
+    if(window._markedHomeClasses.has(classKey)){
+      const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'none';
+    } else {
+      window._nextClassSubj = next.subject;
+      window._nextClassKey = classKey;
+      const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'flex';
+    }
   } else {
     st('#ch','00');st('#cm','00');st('#cs','00');
     const first=todayC[0];
     st('#nc-subject',first?first.subject+' (done)':'No classes today');
     st('#nc-room',first?first.room||'':'');
     si('#nc-meta',first?'<span>All classes done! 🎉</span>':'<span>Upload your timetable →</span>');
+    const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'none';
   }
 }
 function getEndTime(t){const m=parseTime(t)+60;return formatT(Math.floor(m/60),m%60);}
@@ -1393,6 +1409,29 @@ function parseTime(t){
 }
 function formatT(h,m){return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;}
 function pad(n){return String(Math.max(0,n)).padStart(2,'0');}
+
+function markHomeAtt(type){
+  const subj = window._nextClassSubj;
+  const key = window._nextClassKey;
+  if(!subj || !key) return;
+  if(!ATTENDANCE[subj]) ATTENDANCE[subj] = {present:0, absent:0, total:0};
+  
+  if(type === 'p') {
+    ATTENDANCE[subj].present++;
+    STREAK++; XP+=10; LS.set('streak',STREAK); LS.set('xp',XP);
+    toast('✅ Marked present! +10 XP 🔥');
+  } else {
+    ATTENDANCE[subj].absent++;
+    toast('❌ Marked absent');
+  }
+  LS.set('attendance',ATTENDANCE);
+  buildAttendance(); 
+  updateProfileStats();
+  
+  window._markedHomeClasses = window._markedHomeClasses || new Set();
+  window._markedHomeClasses.add(key);
+  const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'none';
+}
 
 // ══════════════════════════════════════════════════════════
 //  AI API PROXY — uses the artifact's built-in endpoint (no CORS)
