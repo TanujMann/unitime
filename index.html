@@ -945,7 +945,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <div class="fg"><label class="fl">Start Time</label><input class="fi2" id="ac-time" type="time" value="09:00"/></div>
     <div class="fg"><label class="fl">Room (optional)</label><input class="fi2" id="ac-room" placeholder="e.g. Room 204"/></div>
     <div class="fg"><label class="fl">Professor (optional)</label><input class="fi2" id="ac-prof" placeholder="e.g. Prof. Sharma"/></div>
-    <button class="btn" onclick="saveManualClass()">Add Class</button>
+    <div style="display:flex;gap:12px;margin-top:14px">
+      <button class="btn" style="flex:2" onclick="saveManualClass()">Save Class</button>
+      <button class="btn-ghost" id="ac-delete-btn" style="flex:1;color:var(--red);border:2px solid var(--red);display:none;font-weight:800;border-radius:14px" onclick="deleteManualClass()">Delete</button>
+    </div>
   </div>
 </div>
 
@@ -1960,7 +1963,26 @@ function saveExtracted(){
 }
 
 // Manual class
-function openAddClassModal(){Q('#addClassModal').classList.add('show');}
+function openAddClassModal(){
+  window._editingClass=null;
+  Q('#addClassModal').classList.add('show');
+  const dbtn=Q('#ac-delete-btn');if(dbtn)dbtn.style.display='none';
+  Q('#addClassModal .m-title').textContent='Add Class Manually';
+  Q('#ac-subject').value='';Q('#ac-room').value='';Q('#ac-prof').value='';
+}
+function editClass(day, time, subject) {
+  const cls=TIMETABLE.find(c=>c.day===day&&c.time===time&&c.subject===subject);
+  if(!cls) return;
+  Q('#ac-subject').value=cls.subject;
+  Q('#ac-day').value=cls.day;
+  Q('#ac-time').value=cls.time;
+  Q('#ac-room').value=cls.room||'';
+  Q('#ac-prof').value=cls.prof||'';
+  window._editingClass=cls;
+  Q('#addClassModal .m-title').textContent='Edit Class';
+  const dbtn=Q('#ac-delete-btn');if(dbtn)dbtn.style.display='block';
+  Q('#addClassModal').classList.add('show');
+}
 function saveManualClass(){
   const subj=Q('#ac-subject').value.trim();
   if(!subj){toast('Enter a subject name');return;}
@@ -1972,15 +1994,32 @@ function saveManualClass(){
     time:Q('#ac-time').value||'09:00',
     room:Q('#ac-room').value.trim(),
     prof:Q('#ac-prof').value.trim(),
-    color:COLORS[colorIdx%COLORS.length]
+    color:window._editingClass?window._editingClass.color:COLORS[colorIdx%COLORS.length]
   };
-  TIMETABLE.push(cls);
+  if(window._editingClass){
+    const idx=TIMETABLE.findIndex(c=>c.day===window._editingClass.day&&c.time===window._editingClass.time&&c.subject===window._editingClass.subject);
+    if(idx>-1)TIMETABLE[idx]=cls;
+  }else{
+    TIMETABLE.push(cls);
+  }
   if(!ATTENDANCE[subj]) ATTENDANCE[subj]={present:0,absent:0,total:0};
   saveAll();
   buildWeekGrid();buildHome();buildAttendance();populateTaskSubjects();
   Q('#addClassModal').classList.remove('show');
   Q('#ac-subject').value='';Q('#ac-room').value='';Q('#ac-prof').value='';
-  toast('✅ Class added!');
+  toast(window._editingClass?'✏️ Class updated!':'✅ Class added!');
+}
+function deleteManualClass(){
+  if(!window._editingClass) return;
+  if(!confirm("Delete this class?")) return;
+  const idx=TIMETABLE.findIndex(c=>c.day===window._editingClass.day&&c.time===window._editingClass.time&&c.subject===window._editingClass.subject);
+  if(idx>-1){
+    TIMETABLE.splice(idx,1);
+    saveAll();
+    buildWeekGrid();buildHome();buildAttendance();populateTaskSubjects();
+    Q('#addClassModal').classList.remove('show');
+    toast('🗑️ Class deleted');
+  }
 }
 
 // Week grid
@@ -1996,7 +2035,11 @@ function buildWeekGrid(){
     ['MON','TUE','WED','THU','FRI'].forEach(day=>{
       const cls=TIMETABLE.find(c=>c.day===day&&formatTimeSlot(c.time)===t);
       const cell=document.createElement('div');
-      if(cls){cell.className='wgc wgf';cell.style.background=cls.color||'#5B4FCF';cell.title=cls.subject;cell.textContent=abbrev(cls.subject);}
+      if(cls){
+        cell.className='wgc wgf';cell.style.background=cls.color||'#5B4FCF';cell.title=cls.subject;cell.textContent=abbrev(cls.subject);
+        cell.style.cursor='pointer';
+        cell.onclick=()=>editClass(cls.day,cls.time,cls.subject);
+      }
       else{cell.className='wgc wge';}
       g.appendChild(cell);
     });
@@ -2040,7 +2083,11 @@ function buildAttendance(){
           <div class="att-sn">${s}</div>
           <div style="font-size:12px;color:var(--text2);font-weight:600;margin-top:2px">${TIMETABLE.find(c=>c.subject===s)?.prof||''}</div>
         </div>
-        <div class="att-pct" style="color:${color}">${total?pct+'%':'—'}</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:14px;cursor:pointer;opacity:0.5;transition:0.2s" onclick="editAttendance('${s.replace(/'/g,"\\'")}')" title="Edit Data">✏️</div>
+          <div style="font-size:14px;cursor:pointer;opacity:0.5;transition:0.2s" onclick="deleteAttendance('${s.replace(/'/g,"\\'")}')" title="Reset Subject">🗑️</div>
+          <div class="att-pct" style="color:${color};margin-left:4px">${total?pct+'%':'—'}</div>
+        </div>
       </div>
       <div class="att-pb"><div class="att-pf" style="width:${pct}%;background:${color}"></div></div>
       <div class="att-row"><span>${a.present} present · ${a.absent} absent · ${total} total</span></div>
@@ -2052,6 +2099,26 @@ function buildAttendance(){
     c.appendChild(d);
   });
   updateProfileStats();
+}
+function editAttendance(subj) {
+  const a = ATTENDANCE[subj] || {present:0, absent:0};
+  const valInfo = prompt(`Format defaults to "Present / Absent". Enter two numbers separated by space or comma.\n\nEdit attendance for ${subj}:`, `${a.present} / ${a.absent}`);
+  if(!valInfo) return;
+  const m = valInfo.match(/(\d+)\D+(\d+)/);
+  if(m) {
+    ATTENDANCE[subj].present = parseInt(m[1])||0;
+    ATTENDANCE[subj].absent = parseInt(m[2])||0;
+  } else {
+    const p = parseInt(valInfo);
+    if(!isNaN(p)) ATTENDANCE[subj].present = p;
+  }
+  ATTENDANCE[subj].total = 0;
+  LS.set('attendance', ATTENDANCE); buildAttendance(); updateProfileStats();
+}
+function deleteAttendance(subj) {
+  if(!confirm(`Reset all attendance data for ${subj}?`)) return;
+  ATTENDANCE[subj] = {present:0, absent:0, total:0};
+  LS.set('attendance', ATTENDANCE); buildAttendance(); updateProfileStats();
 }
 function markA(btn,type,subj){
   if(!ATTENDANCE[subj]) ATTENDANCE[subj]={present:0,absent:0,total:0};
