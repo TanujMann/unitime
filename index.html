@@ -454,6 +454,16 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .nd-body{padding:0 22px 40px;font-size:15px;color:var(--text);font-weight:600;line-height:1.8;white-space:pre-wrap}
 .nd-img{width:calc(100% - 44px);border-radius:18px;margin:0 22px 16px;box-shadow:var(--sh)}
 .nd-meta{padding:0 22px 16px;display:flex;gap:10px;align-items:center;font-size:12px;color:var(--text2);font-weight:700;flex-wrap:wrap}
+
+/* ── ZEN POMODORO ── */
+.zen-fab { position:absolute; right:20px; bottom:20px; background:var(--violet); color:#fff; padding:12px 18px; border-radius:30px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 8px 20px rgba(91,79,207,0.4); z-index:90; }
+.zen-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#101014; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center; color:#fff; animation:fadeUp 0.4s ease; }
+.zen-overlay.active { display:flex; }
+.zen-title { font-size:32px; font-weight:900; margin-bottom:6px; color:var(--violet); display:flex; align-items:center; gap:10px; }
+.zen-sub { font-size:16px; color:rgba(255,255,255,0.6); margin-bottom:40px; font-weight:600; text-align:center; padding:0 20px;}
+.zen-timer { font-size:90px; font-weight:900; font-family:'Inter', 'Nunito', sans-serif; letter-spacing:2px; margin-bottom:60px; text-shadow:0 0 30px rgba(91,79,207,0.5); }
+.zen-exit { padding:14px 28px; border-radius:20px; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.8); font-size:14px; font-weight:800; border:none; cursor:pointer; transition:0.2s; }
+.zen-exit:active { transform:scale(0.95); background:rgba(255,255,255,0.15); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 </head>
@@ -600,6 +610,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       </div>
       <div class="ava" id="home-ava" onclick="show('s-profile','n-prof')">U</div>
     </div>
+    <div class="zen-fab" onclick="startZenMode()">🧘 Zen Mode</div>
     <!-- Next class countdown card -->
     <div class="big-card">
       <div class="bc-label"><div class="pdot"></div>Next Class</div>
@@ -761,6 +772,18 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       <div><div class="psi-n" id="prof-streak" style="color:var(--orange)">0🔥</div><div class="psi-l">Streak</div></div>
       <div><div class="psi-n" id="prof-xp" style="color:var(--green)">0</div><div class="psi-l">XP Points</div></div>
     </div>
+
+    <!-- LEADERBOARD -->
+    <div class="p-card" style="margin-top:20px; padding:20px; background:var(--white); border:2px solid var(--border); border-radius:var(--r2); box-shadow:var(--sh);">
+      <div style="font-size:16px; font-weight:800; color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:8px">
+        🏆 Class Leaderboard
+      </div>
+      <div id="leaderboardList">
+        <div style="text-align:center;color:var(--text3);font-size:13px;padding:20px;font-weight:700">Connecting to network...</div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
     <div class="menu-row" onclick="openShareModal()"><div class="mr-ico" style="background:#ede9ff">🔗</div><div class="mr-body"><div class="mr-t">Share Timetable</div><div class="mr-s">Generate code for classmates</div></div><div class="mr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     <div class="menu-row" onclick="openImportModal()"><div class="mr-ico" style="background:#e8fdf0">📥</div><div class="mr-body"><div class="mr-t">Import Timetable</div><div class="mr-s">Enter a classmate's share code</div></div><div class="mr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     <div class="menu-row" onclick="reqNotif()"><div class="mr-ico" style="background:#e8fdf0">🔔</div><div class="mr-body"><div class="mr-t">Enable Notifications</div><div class="mr-s">Bell + voice reminder before class</div></div><div class="mr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></div></div>
@@ -896,6 +919,12 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <option value="l">🟢 Low</option>
       </select>
     </div>
+    <div class="fg" style="margin-top:14px; margin-bottom:14px">
+      <label style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;color:var(--text);cursor:pointer">
+        <input type="checkbox" id="tShareComm" style="width:20px;height:20px;accent-color:var(--violet)"/>
+        Share with classmates (Community Task)
+      </label>
+    </div>
     <button class="btn" onclick="saveTask()">Add Task</button>
   </div>
 </div>
@@ -1004,6 +1033,14 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   <div class="nd-meta" id="ndMeta"></div>
   <img class="nd-img" id="ndImg" style="display:none"/>
   <div class="nd-body" id="ndBody"></div>
+</div>
+
+<!-- Zen Mode Overlay -->
+<div class="zen-overlay" id="zenOverlay">
+  <div class="zen-title">🧘 Zen Mode</div>
+  <div class="zen-sub">Stay focused. If you quit or close the app, you lose your reward.</div>
+  <div class="zen-timer" id="zenTimer">25:00</div>
+  <button class="zen-exit" onclick="exitZenMode()">Quit (Lose XP)</button>
 </div>
 
 <script>
@@ -2050,7 +2087,14 @@ function populateTaskSubjects(){
 function renderTasks(){
   const p=Q('#tPending'),d=Q('#tDone');
   p.innerHTML='';d.innerHTML='';
-  const pending=TASKS.filter(t=>!t.done),done=TASKS.filter(t=>t.done);
+  let mergedTasks = [...TASKS];
+  if(COMMUNITY_DATA.tasks) {
+     COMMUNITY_DATA.tasks.forEach(ct => {
+        if(!mergedTasks.find(t => t.id === ct.id)) mergedTasks.push({...ct, isCommunity: true});
+     });
+  }
+  const pending=mergedTasks.filter(t=>!t.done);
+  const done=mergedTasks.filter(t=>t.done);
   pending.forEach(t=>p.appendChild(mkT(t)));
   done.forEach(t=>d.appendChild(mkT(t)));
   if(!pending.length) p.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:14px;font-weight:700">🎉 All caught up!</div>';
@@ -2075,18 +2119,26 @@ function mkT(t){
         <span>📅 ${t.due||'No date'}</span>
         ${t.time?`<span>⏰ ${to12h(t.time)}</span>`:''}
         <span class="ptag ${pc}">${pl}</span>
+        ${t.isCommunity?`<span style="margin-left:4px;color:var(--violet)">🌍 Shared</span>`:''}
       </div>
     </div>
     <div class="ti-acts">
-      <button class="ti-btn" onclick="editTask(${t.id}, event)" title="Edit">✏️</button>
-      <button class="ti-btn" onclick="deleteTask(${t.id}, event)" title="Delete" style="color:var(--red)">🗑️</button>
+      ${t.isCommunity ? `<span style="font-size:11px;color:var(--text3);padding:4px">🌍</span>` :
+      `<button class="ti-btn" onclick="editTask(${t.id}, event)" title="Edit">✏️</button>
+      <button class="ti-btn" onclick="deleteTask(${t.id}, event)" title="Delete" style="color:var(--red)">🗑️</button>`}
     </div>`;
   return d;
 }
 function toggleTask(id){
-  const t=TASKS.find(x=>x.id===id);if(!t) return;
+  let t=TASKS.find(x=>x.id===id);
+  if(!t && COMMUNITY_DATA.tasks) {
+     const ct = COMMUNITY_DATA.tasks.find(x=>x.id===id);
+     if(ct) { t = {...ct, done: false}; TASKS.push(t); }
+  }
+  if(!t) return;
   t.done=!t.done;
   if(t.done){XP+=20;LS.set('xp',XP);}
+  else if(XP>=20){XP-=20;LS.set('xp',XP);}
   LS.set('tasks',TASKS);renderTasks();
   toast(t.done?'✅ Task done! +20 XP':'↩️ Task reopened');
 }
@@ -2132,6 +2184,7 @@ function saveTask(){
   const title=Q('#tTitle').value.trim();
   if(!title){toast('Enter a task title');return;}
   
+  let newTask = null;
   if (window.editingTaskId) {
     const t = TASKS.find(x => x.id === window.editingTaskId);
     if(t) {
@@ -2143,13 +2196,19 @@ function saveTask(){
     }
     toast('✏️ Task updated!');
   } else {
-    TASKS.push({id:Date.now(),title,subject:Q('#tSubject').value.trim(),due:Q('#tDue').value||'',time:Q('#tTime').value||'',pri:Q('#tPri').value,done:false});
+    newTask = {id:Date.now(),title,subject:Q('#tSubject').value.trim(),due:Q('#tDue').value||'',time:Q('#tTime').value||'',pri:Q('#tPri').value,done:false};
+    TASKS.push(newTask);
     toast('✅ Task added!');
   }
   
   LS.set('tasks',TASKS);
   renderTasks();
   scheduleTaskReminders();
+  
+  const shareChk = Q('#tShareComm');
+  if(newTask && shareChk && shareChk.checked) shareTaskToCommunity(newTask);
+  if(shareChk) shareChk.checked = false;
+  
   Q('#taskModal').classList.remove('show');
   Q('#tTitle').value='';Q('#tDue').value='';Q('#tTime').value='';
 }
@@ -2629,6 +2688,7 @@ function saveProfile(){
   USER.college=Q('#ep-college').value.trim()||USER.college;
   USER.course=Q('#ep-course').value.trim()||USER.course;
   LS.set('user',USER);applyUser();
+  syncUserToCommunity();
   Q('#editModal').classList.remove('show');
   toast('✅ Profile updated!');
 }
@@ -2666,11 +2726,18 @@ function handlePicUpload(e){
   };
   reader.readAsDataURL(file);
 }
+function getShareCode(){
+  let code = LS.get('shareCode');
+  if (code) return code;
+  if (!TIMETABLE.length) return null;
+  const payload = JSON.stringify(TIMETABLE);
+  code = 'UNI-' + btoa(unescape(encodeURIComponent(payload)));
+  LS.set('shareCode', code);
+  return code;
+}
 function openShareModal(){
-  if(!TIMETABLE.length){toast('⚠️ No timetable to share yet!');return;}
-  const payload=JSON.stringify(TIMETABLE);
-  const encoded=btoa(unescape(encodeURIComponent(payload)));
-  const code='UNI-'+encoded;
+  const code = getShareCode();
+  if(!code){toast('⚠️ No timetable to share yet!');return;}
   const el=document.getElementById('shareCodeDisplay');
   if(el) el.textContent=code;
   document.getElementById('shareModal').classList.add('show');
@@ -2714,10 +2781,12 @@ function importTimetableFromCode(){
     });
     const subjects=[...new Set(TIMETABLE.map(c=>c.subject))];
     subjects.forEach(s=>{if(!ATTENDANCE[s]) ATTENDANCE[s]={present:0,absent:0,total:0};});
+    LS.set('shareCode', raw);
     saveAll();buildWeekGrid();buildHome();buildAttendance();populateTaskSubjects();
     closeModal2('importModal');
     toast('✅ Imported '+classes.length+' classes ('+(added>0?added+' new':'all already present')+')!');
     show('s-home','n-home');
+    fetchCommunityData();
   } catch(e){
     showErr('Invalid or corrupted code. Ask your classmate to reshare.');
   }
@@ -3431,6 +3500,113 @@ function urlBase64ToUint8Array(base64String) {
   return out;
 }
 
+// ── COMMUNITY & GAMIFICATION ──
+let COMMUNITY_DATA = { leaderboard: [], tasks: [] };
+
+async function fetchCommunityData() {
+  const code = getShareCode();
+  if (!code) return;
+  try {
+    const res = await fetch(PUSH_SERVER_URL + '/api/community?code=' + encodeURIComponent(code));
+    if(res.ok) {
+      COMMUNITY_DATA = await res.json();
+      renderLeaderboard();
+      const tbody = Q('#tBody'); if(tbody) renderTasks(); // refresh if active
+    }
+  } catch (e) { console.error('Community fetch error:', e); }
+}
+
+async function syncUserToCommunity() {
+  const code = getShareCode();
+  if (!code || !USER) return;
+  if (!USER.id) { USER.id = 'u_' + Date.now() + Math.random().toString(36).slice(2); LS.set('user', USER); }
+  
+  const userPayload = { id: USER.id, name: USER.name || 'Anonymous', pic: USER.pic || null, xp: XP, streak: STREAK };
+  try {
+    const res = await fetch(PUSH_SERVER_URL + '/api/community', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'update_user', code, user: userPayload })
+    });
+    if(res.ok){
+      const data = await res.json();
+      if(data.data) { COMMUNITY_DATA = data.data; renderLeaderboard(); }
+    }
+  } catch (e) { console.error('Community sync error:', e); }
+}
+
+async function shareTaskToCommunity(task) {
+  const code = getShareCode();
+  if (!code) return;
+  try {
+    const t = {...task, createdAt: Date.now(), authorId: USER?.id};
+    const res = await fetch(PUSH_SERVER_URL + '/api/community', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'add_task', code, task: t })
+    });
+    if(res.ok){
+      const data = await res.json();
+      if(data.data) { COMMUNITY_DATA = data.data; renderTasks(); }
+      toast('🌍 Task shared with class!');
+    }
+  } catch(e) { console.error('Community task error:', e); }
+}
+
+function renderLeaderboard() {
+  const list = Q('#leaderboardList');
+  if(!list) return;
+  if(!getShareCode()) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">Share or import a timetable to join the leaderboard!</div>';
+    return;
+  }
+  if(!COMMUNITY_DATA.leaderboard || COMMUNITY_DATA.leaderboard.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">No classmates here yet. Share your code!</div>';
+    return;
+  }
+  list.innerHTML = COMMUNITY_DATA.leaderboard.map((u, i) => `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <div style="font-size:16px;font-weight:900;color:var(--text3);width:20px;text-align:center">${i===0?'🏆':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--vl);color:var(--violet);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;overflow:hidden">
+        ${u.pic ? `<img src="${u.pic}" style="width:100%;height:100%;object-fit:cover"/>` : (u.name?u.name[0].toUpperCase():'S')}
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:800;color:var(--text1)">${u.name || 'Student'} ${u.id === USER?.id ? '<span style="color:var(--violet)">(You)</span>':''}</div>
+        <div style="font-size:12px;color:var(--text2);font-weight:700">Streak: 🔥 ${u.streak||0}</div>
+      </div>
+      <div style="font-weight:900;color:var(--violet);font-size:15px;text-align:right">${u.xp||0}<br><span style="font-size:10px;color:var(--text3)">XP</span></div>
+    </div>
+  `).join('');
+}
+
+// ── ZEN MODE ──
+let zenInterval = null, zenMins = 25, zenSecs = 0;
+function startZenMode(){
+  zenMins = 25; zenSecs = 0;
+  Q('#zenTimer').textContent = '25:00';
+  Q('#zenOverlay').classList.add('active');
+  zenInterval = setInterval(zenTick, 1000);
+}
+function zenTick(){
+  if(zenMins === 0 && zenSecs === 0){
+    clearInterval(zenInterval);
+    Q('#zenOverlay').classList.remove('active');
+    XP += 25; LS.set('xp', XP);
+    syncUserToCommunity(); updateProfileStats();
+    toast('🧘 Zen complete! +25 XP');
+    return;
+  }
+  if(zenSecs === 0) { zenMins--; zenSecs = 59; }
+  else { zenSecs--; }
+  Q('#zenTimer').textContent = String(zenMins).padStart(2,'0') + ':' + String(zenSecs).padStart(2,'0');
+}
+function exitZenMode(){
+  if(confirm("Exit Zen Mode? You will lose out on the XP reward!")){
+    clearInterval(zenInterval);
+    Q('#zenOverlay').classList.remove('active');
+  }
+}
+
 // ── SWIPE NAVIGATION GESTURES ──
 let _tsX = 0, _tsY = 0;
 document.addEventListener('touchstart', e => {
@@ -3471,7 +3647,10 @@ document.addEventListener('touchend', e => {
   }
 }, {passive:true});
 
-window.addEventListener('load', () => setupPushNotifications());
+window.addEventListener('load', () => {
+  setupPushNotifications();
+  setTimeout(() => fetchCommunityData(), 1500);
+});
 
 </script>
 </body>
