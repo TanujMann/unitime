@@ -266,17 +266,14 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .tchk.done{background:var(--green);border-color:var(--green)}
 .tchk svg{display:none;width:12px;height:12px;color:#fff}
 .tchk.done svg{display:block}
-.ti-body{flex:1;min-width:0}
-.ti-t{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti-body{flex:1}
+.ti-t{font-size:15px;font-weight:800}
 .ti-t.done{text-decoration:line-through;color:var(--text3)}
 .ti-m{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:5px;font-size:12px;color:var(--text2);font-weight:700}
 .ptag{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
 .ph{background:#fff0f5;color:var(--pink)}
 .pm{background:#fff8e6;color:#e07b00}
 .pl{background:#e8fdf0;color:var(--green)}
-.ti-acts{display:flex;flex-direction:column;gap:6px;margin-left:8px}
-.ti-btn{background:var(--bg);border:none;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:.15s}
-.ti-btn:active{transform:scale(.92)}
 .add-task-row{margin:0 20px 12px;background:var(--white);border:1.5px dashed rgba(91,79,207,.3);border-radius:var(--r);padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:14px;font-weight:800;color:var(--violet);box-shadow:var(--sh);transition:.15s}
 .add-task-row:active{background:var(--vl)}
 
@@ -325,60 +322,37 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .toast{position:fixed;bottom:106px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;border-radius:14px;padding:11px 22px;font-size:13px;font-weight:700;z-index:400;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── PREMIUM IN-APP NOTIFICATION BANNER ── */
+/* ── DUOLINGO-STYLE NOTIFICATION ── */
 .duo-notif{
-  position:fixed;top:-350px;left:50%;transform:translateX(-50%);
+  position:fixed;top:-180px;left:50%;transform:translateX(-50%);
   width:calc(100% - 24px);max-width:396px;
-  background:rgba(22, 22, 34, 0.85); /* Deep dark glass */
-  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  border:1px solid rgba(255, 255, 255, 0.15);
-  border-radius:24px;
-  box-shadow:0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 8px 32px rgba(123, 111, 232, 0.25);
-  z-index:9999;transition:top .6s cubic-bezier(.34, 1.56, .64, 1);
-  overflow:hidden;
-  color:#fff;
-  pointer-events: none;
+  background:var(--white);border-radius:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.18),0 4px 20px rgba(91,79,207,.2);
+  z-index:9999;transition:top .5s cubic-bezier(.34,1.4,.64,1);
+  overflow:hidden;border:2px solid var(--border)
 }
-.duo-notif.show{top:calc(env(safe-area-inset-top,0px) + 16px); pointer-events: auto;}
-/* Glowing animated top border / streak */
-.duo-notif-streak{
-  height:4px;width:100%;
-  background:linear-gradient(90deg, #FF6B9D, #7B6FE8, #06C270, #FF6B9D);
-  background-size:200% 100%;
-  animation:bgPan 3s linear infinite;
-}
-@keyframes bgPan { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-.duo-notif-body{display:flex;align-items:center;gap:16px;padding:20px 20px 14px}
-.duo-notif-owl{
-  width:52px;height:52px;border-radius:16px;
-  display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;
-  box-shadow:0 8px 24px rgba(0,0,0,0.3) inset, 0 4px 12px rgba(255,255,255,0.1);
-  position:relative;animation:floatIcon 3s ease-in-out infinite;
-}
-@keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.duo-notif.show{top:calc(env(safe-area-inset-top,0px) + 16px)}
+/* Streak-bar at top */
+.duo-notif-streak{height:6px;width:100%;background:linear-gradient(90deg,#58CC02,#89E219)}
+.duo-notif-body{display:flex;align-items:center;gap:14px;padding:16px 18px 12px}
+.duo-notif-owl{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;position:relative;animation:owlBob .6s ease infinite alternate}
+@keyframes owlBob{from{transform:translateY(0)}to{transform:translateY(-4px)}}
 .duo-notif-text{flex:1;min-width:0}
-.duo-notif-title{font-size:16px;font-weight:900;line-height:1.25;margin-bottom:4px;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
-.duo-notif-sub{font-size:13px;color:rgba(255,255,255,0.7);font-weight:600;display:flex;align-items:center;gap:6px}
-.duo-notif-badge{
-  font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;letter-spacing:.04em;text-transform:uppercase;
-}
-.duo-notif-badge.normal{background:rgba(123, 111, 232, 0.2);color:#B9AFFF;border:1px solid rgba(123, 111, 232, 0.4)}
-.duo-notif-badge.urgent{background:rgba(255, 77, 77, 0.2);color:#FF8585;border:1px solid rgba(255, 77, 77, 0.4);animation:urgentPulse 1s ease infinite alternate}
+.duo-notif-title{font-size:15px;font-weight:900;color:var(--text);line-height:1.2;margin-bottom:3px}
+.duo-notif-sub{font-size:12px;color:var(--text2);font-weight:700}
+.duo-notif-badge{font-size:11px;font-weight:900;padding:4px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;letter-spacing:.02em}
+.duo-notif-badge.normal{background:#FFF3D4;color:#FF9600;border:1.5px solid #FFD166}
+.duo-notif-badge.urgent{background:#FFE0E6;color:#FF4D4D;border:1.5px solid #FF6B9D;animation:urgentPulse .5s ease infinite alternate}
+@keyframes urgentPulse{from{transform:scale(1)}to{transform:scale(1.06)}}
 /* XP reward row */
-.duo-notif-xp{display:flex;align-items:center;gap:8px;padding:0 20px 14px;font-size:13px;font-weight:800;color:#06C270}
-.duo-xp-pill{background:rgba(6, 194, 112, 0.15);border:1px solid rgba(6, 194, 112, 0.3);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
-/* Action buttons */
-.duo-notif-actions{display:flex;gap:12px;padding:0 20px 20px}
-.dna-dismiss{
-  flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;transition:.2s
-}
-.dna-dismiss:active{background:rgba(255,255,255,0.1);transform:scale(.96)}
-.dna-action{
-  flex:2;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg, #FF6B9D, #7B6FE8);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 8px 24px rgba(123, 111, 232, 0.4);transition:.2s;position:relative;overflow:hidden
-}
-.dna-action::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);animation:shine 3s infinite}
-@keyframes shine { 0% { left:-100% } 20%, 100% { left: 200% } }
-.dna-action:active{transform:scale(.96);box-shadow:0 4px 12px rgba(123, 111, 232, 0.3)}
+.duo-notif-xp{display:flex;align-items:center;gap:8px;padding:0 18px 12px;font-size:12px;font-weight:800;color:#58CC02}
+.duo-xp-pill{background:#E8FDF0;border-radius:20px;padding:3px 10px;display:flex;align-items:center;gap:4px}
+/* Action buttons - Duolingo style */
+.duo-notif-actions{display:flex;gap:10px;padding:0 16px 16px}
+.dna-dismiss{flex:1;padding:12px;border-radius:14px;border:2px solid var(--border);background:var(--white);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text2);cursor:pointer;transition:.15s}
+.dna-dismiss:active{transform:scale(.97)}
+.dna-action{flex:2;padding:12px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--violet),var(--violet2));font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(91,79,207,.35);transition:.15s}
+.dna-action:active{transform:scale(.97);box-shadow:none}
 
 /* ── API KEY SCREEN ── */
 #s-apikey{background:var(--bg);align-items:center;justify-content:center;min-height:100vh}
@@ -454,24 +428,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .nd-body{padding:0 22px 40px;font-size:15px;color:var(--text);font-weight:600;line-height:1.8;white-space:pre-wrap}
 .nd-img{width:calc(100% - 44px);border-radius:18px;margin:0 22px 16px;box-shadow:var(--sh)}
 .nd-meta{padding:0 22px 16px;display:flex;gap:10px;align-items:center;font-size:12px;color:var(--text2);font-weight:700;flex-wrap:wrap}
-
-/* ── ZEN POMODORO ── */
-.zen-fab { position:absolute; right:20px; bottom:96px; background:var(--violet); color:#fff; padding:12px 18px; border-radius:30px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 8px 20px rgba(91,79,207,0.4); z-index:90; }
-.zen-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#101014; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center; color:#fff; animation:fadeUp 0.4s ease; }
-.zen-overlay.active { display:flex; }
-.zen-title { font-size:32px; font-weight:900; margin-bottom:6px; color:var(--violet); display:flex; align-items:center; gap:10px; }
-.zen-sub { font-size:16px; color:rgba(255,255,255,0.6); margin-bottom:40px; font-weight:600; text-align:center; padding:0 20px;}
-.zen-timer { font-size:90px; font-weight:900; font-family:'Inter', 'Nunito', sans-serif; letter-spacing:2px; margin-bottom:40px; text-shadow:0 0 30px rgba(91,79,207,0.5); }
-.lofi-player { display:flex; flex-direction:column; gap:16px; background:rgba(255,255,255,0.04); padding:20px 24px; border-radius:24px; border:1px solid rgba(255,255,255,0.08); margin-bottom:30px; width:300px; max-width:90vw;backdrop-filter:blur(10px) }
-.lofi-info { display:flex; justify-content:space-between; align-items:center; }
-.lofi-title { font-size:14px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px; }
-.lofi-status { font-size:11px; color:rgba(255,255,255,0.5); font-weight:800; text-transform:uppercase; letter-spacing:1px; }
-.lofi-controls { display:flex; align-items:center; gap:16px; }
-.lofi-play { width:46px; height:46px; border-radius:50%; background:var(--violet); color:#fff; border:none; font-size:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:0.2s; box-shadow:0 8px 20px rgba(91,79,207,0.3); }
-.lofi-play:active { transform:scale(0.92); }
-.lofi-vol { flex:1; accent-color:var(--violet); height:4px; border-radius:2px; background:rgba(255,255,255,0.1); outline:none; }
-.zen-exit { padding:14px 28px; border-radius:20px; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.8); font-size:14px; font-weight:800; border:none; cursor:pointer; transition:0.2s; }
-.zen-exit:active { transform:scale(0.95); background:rgba(255,255,255,0.15); }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
 </head>
@@ -482,7 +438,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 <div id="s-splash" class="screen active">
   <div class="splash-inner">
     <div class="app-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
     </div>
     <div>
       <div class="app-name">Uni<span>Time</span> AI</div>
@@ -618,7 +574,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       </div>
       <div class="ava" id="home-ava" onclick="show('s-profile','n-prof')">U</div>
     </div>
-    <div class="zen-fab" onclick="startZenMode()">🧘 Zen Mode</div>
     <!-- Next class countdown card -->
     <div class="big-card">
       <div class="bc-label"><div class="pdot"></div>Next Class</div>
@@ -629,10 +584,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <div class="cnt-box"><div class="cnt-n" id="ch">00</div><div class="cnt-l">HOURS</div></div>
         <div class="cnt-box"><div class="cnt-n" id="cm">00</div><div class="cnt-l">MIN</div></div>
         <div class="cnt-box"><div class="cnt-n" id="cs">00</div><div class="cnt-l">SEC</div></div>
-      </div>
-      <div id="nc-att-btns" style="display:none; gap:8px; margin-top:14px">
-        <button class="att-btn p" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="markHomeAtt('p')">✅ Present</button>
-        <button class="att-btn a" style="background:rgba(255,255,255,.15);border:none;color:#fff" onclick="markHomeAtt('a')">❌ Absent</button>
       </div>
     </div>
     <!-- Stats grid -->
@@ -780,18 +731,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       <div><div class="psi-n" id="prof-streak" style="color:var(--orange)">0🔥</div><div class="psi-l">Streak</div></div>
       <div><div class="psi-n" id="prof-xp" style="color:var(--green)">0</div><div class="psi-l">XP Points</div></div>
     </div>
-
-    <!-- LEADERBOARD -->
-    <div class="p-card" style="margin-top:20px; padding:20px; background:var(--white); border:2px solid var(--border); border-radius:var(--r2); box-shadow:var(--sh);">
-      <div style="font-size:16px; font-weight:800; color:var(--text); margin-bottom:14px; display:flex; align-items:center; gap:8px">
-        🏆 Class Leaderboard
-      </div>
-      <div id="leaderboardList">
-        <div style="text-align:center;color:var(--text3);font-size:13px;padding:20px;font-weight:700">Connecting to network...</div>
-      </div>
-    </div>
-
-    <div style="height:20px"></div>
     <div class="menu-row" onclick="openShareModal()"><div class="mr-ico" style="background:#ede9ff">🔗</div><div class="mr-body"><div class="mr-t">Share Timetable</div><div class="mr-s">Generate code for classmates</div></div><div class="mr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     <div class="menu-row" onclick="openImportModal()"><div class="mr-ico" style="background:#e8fdf0">📥</div><div class="mr-body"><div class="mr-t">Import Timetable</div><div class="mr-s">Enter a classmate's share code</div></div><div class="mr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></div></div>
     <div class="menu-row" onclick="reqNotif()"><div class="mr-ico" style="background:#e8fdf0">🔔</div><div class="mr-body"><div class="mr-t">Enable Notifications</div><div class="mr-s">Bell + voice reminder before class</div></div><div class="mr-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg></div></div>
@@ -886,11 +825,11 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 </div>
 <div class="toast" id="toastEl"></div>
 
-<!-- Premium Notification -->
+<!-- Duolingo-style Notification -->
 <div class="duo-notif" id="duoNotif">
   <div class="duo-notif-streak"></div>
   <div class="duo-notif-body">
-    <div class="duo-notif-owl" id="duoIco">✨</div>
+    <div class="duo-notif-owl" id="duoIco">🦉</div>
     <div class="duo-notif-text">
       <div class="duo-notif-title" id="duoTitle">Class Starting Soon!</div>
       <div class="duo-notif-sub" id="duoSub">Room 204 · Prof. Kumar</div>
@@ -927,12 +866,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <option value="l">🟢 Low</option>
       </select>
     </div>
-    <div class="fg" style="margin-top:14px; margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;color:var(--text);cursor:pointer">
-        <input type="checkbox" id="tShareComm" style="width:20px;height:20px;accent-color:var(--violet)"/>
-        Share with classmates (Community Task)
-      </label>
-    </div>
     <button class="btn" onclick="saveTask()">Add Task</button>
   </div>
 </div>
@@ -953,10 +886,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <div class="fg"><label class="fl">Start Time</label><input class="fi2" id="ac-time" type="time" value="09:00"/></div>
     <div class="fg"><label class="fl">Room (optional)</label><input class="fi2" id="ac-room" placeholder="e.g. Room 204"/></div>
     <div class="fg"><label class="fl">Professor (optional)</label><input class="fi2" id="ac-prof" placeholder="e.g. Prof. Sharma"/></div>
-    <div style="display:flex;gap:12px;margin-top:14px">
-      <button class="btn" style="flex:2" onclick="saveManualClass()">Save Class</button>
-      <button class="btn-ghost" id="ac-delete-btn" style="flex:1;color:var(--red);border:2px solid var(--red);display:none;font-weight:800;border-radius:14px" onclick="deleteManualClass()">Delete</button>
-    </div>
+    <button class="btn" onclick="saveManualClass()">Add Class</button>
   </div>
 </div>
 
@@ -1039,32 +969,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   <div class="nd-header">
     <button class="nd-back" onclick="closeNoteDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="nd-title" id="ndTitle"></div>
-    <button class="nd-back" id="ndEditBtn" style="color:var(--violet)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
   </div>
   <div class="nd-meta" id="ndMeta"></div>
   <img class="nd-img" id="ndImg" style="display:none"/>
   <div class="nd-body" id="ndBody"></div>
-</div>
-
-<!-- Zen Mode Overlay -->
-<div class="zen-overlay" id="zenOverlay">
-  <div class="zen-title">🧘 Zen Mode</div>
-  <div class="zen-sub">Stay focused. If you quit or close the app, you lose your reward.</div>
-  <div class="zen-timer" id="zenTimer">25:00</div>
-  
-  <div class="lofi-player">
-    <div class="lofi-info">
-      <div class="lofi-title">🎧 Lo-Fi Study Beats</div>
-      <div class="lofi-status" id="lofiStatus">Paused</div>
-    </div>
-    <div class="lofi-controls">
-      <button class="lofi-play" id="lofiPlayBtn" onclick="toggleLofi()">▶</button>
-      <input type="range" id="lofiVolume" class="lofi-vol" min="0" max="1" step="0.05" value="0.7" onchange="changeLofiVolume(this.value)" oninput="changeLofiVolume(this.value)"/>
-    </div>
-    <audio id="lofiAudio" src="https://lofi.stream.laut.fm/lofi" preload="none"></audio>
-  </div>
-
-  <button class="zen-exit" onclick="exitZenMode()">Quit (Lose XP)</button>
 </div>
 
 <script>
@@ -1072,14 +980,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 // ── STORAGE ──
 const LS={
   get:(k,d=null)=>{try{const v=localStorage.getItem('ut_'+k);return v!==null?JSON.parse(v):d;}catch{return d;}},
-  set:(k,v)=>{
-    try{
-      localStorage.setItem('ut_'+k,JSON.stringify(v));
-      if((k==='tasks'||k==='timetable') && typeof syncScheduleToPushServer === 'function') {
-        syncScheduleToPushServer();
-      }
-    }catch{}
-  },
+  set:(k,v)=>{try{localStorage.setItem('ut_'+k,JSON.stringify(v));}catch{}},
   del:(k)=>{try{localStorage.removeItem('ut_'+k);}catch{}}
 };
 
@@ -1092,6 +993,26 @@ let STREAK=LS.get('streak',0);
 let XP=LS.get('xp',0);
 let OB_SEM=null,OB_ATT=80;
 let PENDING_EXTRACT=[]; // from AI scan, not yet saved
+
+// ── Track which classes were already marked today (prevents double-counting on reload) ──
+let MARKED_TODAY = LS.get('markedToday', { date: '', entries: {} });
+(function cleanMarkedToday() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (MARKED_TODAY.date !== todayStr) {
+    MARKED_TODAY = { date: todayStr, entries: {} };
+    LS.set('markedToday', MARKED_TODAY);
+  }
+})();
+function getMarkedKey(subj, time) {
+  return subj + '_' + (time || 'notif');
+}
+function isMarkedToday(subj, time) {
+  return !!MARKED_TODAY.entries[getMarkedKey(subj, time)];
+}
+function setMarkedToday(subj, time, type) {
+  MARKED_TODAY.entries[getMarkedKey(subj, time)] = type; // 'p' or 'a'
+  LS.set('markedToday', MARKED_TODAY);
+}
 
 const COLORS=['#5B4FCF','#FF6B9D','#06C270','#FF8C42','#FFD166','#00B4D8','#9B5DE5','#F15BB5','#e07b00','#06A0A0'];
 const DAYS_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1442,24 +1363,12 @@ function tick(){
     st('#nc-subject',next.subject);
     st('#nc-room',next.room||'');
     si('#nc-meta',`<span>🕐 ${next.time} – ${getEndTime(next.time)}</span><span>👤 ${next.prof||'Instructor'}</span>`);
-    
-    // Show attendance buttons for home screen if not marked yet
-    window._markedHomeClasses = window._markedHomeClasses || new Set();
-    const classKey = today + next.time + next.subject;
-    if(window._markedHomeClasses.has(classKey)){
-      const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'none';
-    } else {
-      window._nextClassSubj = next.subject;
-      window._nextClassKey = classKey;
-      const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'flex';
-    }
   } else {
     st('#ch','00');st('#cm','00');st('#cs','00');
     const first=todayC[0];
     st('#nc-subject',first?first.subject+' (done)':'No classes today');
     st('#nc-room',first?first.room||'':'');
     si('#nc-meta',first?'<span>All classes done! 🎉</span>':'<span>Upload your timetable →</span>');
-    const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'none';
   }
 }
 function getEndTime(t){const m=parseTime(t)+60;return formatT(Math.floor(m/60),m%60);}
@@ -1471,29 +1380,6 @@ function parseTime(t){
 }
 function formatT(h,m){return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;}
 function pad(n){return String(Math.max(0,n)).padStart(2,'0');}
-
-function markHomeAtt(type){
-  const subj = window._nextClassSubj;
-  const key = window._nextClassKey;
-  if(!subj || !key) return;
-  if(!ATTENDANCE[subj]) ATTENDANCE[subj] = {present:0, absent:0, total:0};
-  
-  if(type === 'p') {
-    ATTENDANCE[subj].present++;
-    STREAK++; XP+=10; LS.set('streak',STREAK); LS.set('xp',XP);
-    toast('✅ Marked present! +10 XP 🔥');
-  } else {
-    ATTENDANCE[subj].absent++;
-    toast('❌ Marked absent');
-  }
-  LS.set('attendance',ATTENDANCE);
-  buildAttendance(); 
-  updateProfileStats();
-  
-  window._markedHomeClasses = window._markedHomeClasses || new Set();
-  window._markedHomeClasses.add(key);
-  const btns = Q('#nc-att-btns'); if(btns) btns.style.display = 'none';
-}
 
 // ══════════════════════════════════════════════════════════
 //  AI API PROXY — uses the artifact's built-in endpoint (no CORS)
@@ -1549,26 +1435,30 @@ let duoTimeout = null;
 const scheduledAlerts = new Set();
 const firedAlerts = new Set();
 
-// ── Sync schedule data to Service Worker for background notifications ──
-function syncScheduleToSW() {
-  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
+// ── Build reminders for the next 7 days (not just today!) ──
+function buildWeekReminders() {
   const now = new Date();
-  const today = DAYS_SHORT[now.getDay()];
-  const userName = USER?.name?.split(' ')[0] || '';
-  const streak = STREAK || 0;
+  const nowMs = now.getTime();
   const classReminders = [];
-  TIMETABLE.filter(c => c.day === today).forEach(cls => {
-    const [h, m] = (cls.time || '09:00').split(':').map(Number);
-    const classDate = new Date(now);
-    classDate.setHours(h, m, 0, 0);
-    const classMs = classDate.getTime();
-    [30, 15, 10, 5, 1].forEach(mins => {
-      const fireAt = classMs - mins * 60 * 1000;
-      if (fireAt > now.getTime() + 5000) {
-        classReminders.push({ type:'class', fireAt, subject:cls.subject, room:cls.room||'', prof:cls.prof||'', minsLeft:mins, urgency: mins<=1?'urgent':'normal' });
-      }
+  // Build reminders for today + next 6 days
+  for (let d = 0; d < 7; d++) {
+    const date = new Date(now);
+    date.setDate(date.getDate() + d);
+    date.setHours(0, 0, 0, 0);
+    const dayShort = DAYS_SHORT[date.getDay()];
+    TIMETABLE.filter(c => c.day === dayShort).forEach(cls => {
+      const [h, m] = (cls.time || '09:00').split(':').map(Number);
+      const classDate = new Date(date);
+      classDate.setHours(h, m, 0, 0);
+      const classMs = classDate.getTime();
+      [30, 15, 10, 5, 1].forEach(mins => {
+        const fireAt = classMs - mins * 60 * 1000;
+        if (fireAt > nowMs + 5000) {
+          classReminders.push({ type:'class', fireAt, subject:cls.subject, room:cls.room||'', prof:cls.prof||'', minsLeft:mins, urgency: mins<=1?'urgent':'normal' });
+        }
+      });
     });
-  });
+  }
   const taskReminders = [];
   TASKS.filter(t => !t.done && t.due && t.time).forEach(task => {
     const taskDate = new Date(task.due + 'T' + task.time + ':00');
@@ -1576,11 +1466,20 @@ function syncScheduleToSW() {
     if (isNaN(taskMs)) return;
     [30, 15, 5, 0].forEach(mins => {
       const fireAt = taskMs - mins * 60 * 1000;
-      if (fireAt > now.getTime() + 5000) {
+      if (fireAt > nowMs + 5000) {
         taskReminders.push({ type:'task', fireAt, title:task.title, subject:task.subject||'', pri:task.pri||'m', minsLeft:mins, urgency: mins<=0?'urgent':'normal' });
       }
     });
   });
+  return { classReminders, taskReminders };
+}
+
+// ── Sync schedule data to Service Worker for background notifications ──
+function syncScheduleToSW() {
+  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
+  const userName = USER?.name?.split(' ')[0] || '';
+  const streak = STREAK || 0;
+  const { classReminders, taskReminders } = buildWeekReminders();
   navigator.serviceWorker.controller.postMessage({ action:'SYNC_REMINDERS', classReminders, taskReminders, userName, streak });
 }
 
@@ -1591,6 +1490,16 @@ function startNotificationScheduler() {
   // Sync to SW for background notifications
   setTimeout(() => syncScheduleToSW(), 2000);
   setInterval(() => syncScheduleToSW(), 2 * 60 * 1000);
+  // Also sync to push server periodically (every 5 min)
+  setTimeout(() => syncScheduleToPushServer(), 3000);
+  setInterval(() => syncScheduleToPushServer(), 5 * 60 * 1000);
+  // Re-sync when user returns to the app (visibility change)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      syncScheduleToSW();
+      syncScheduleToPushServer();
+    }
+  });
   // Listen for SW messages (notification click)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('message', (event) => {
@@ -1598,10 +1507,6 @@ function startNotificationScheduler() {
         window.focus();
         if (event.data.type === 'task') show('s-tasks', 'n-tasks');
         else show('s-home', 'n-home');
-      }
-      if (event.data?.action === 'SHOW_IN_APP_NOTIF') {
-        const {cls, minsLeft, urgency} = event.data;
-        triggerReminder(cls, minsLeft, urgency);
       }
     });
   }
@@ -1634,10 +1539,9 @@ function scheduleAllReminders() {
   });
 }
 
-// ── TRIGGER NOTIFICATION (Foreground only) ──
 function triggerReminder(cls, minsLeft, urgency = 'normal') {
-  // Directly show the lovely in-app banner instead of iOS native one to prevent overlap
   showDuoNotification(cls, minsLeft, urgency);
+  sendBrowserNotif(cls, minsLeft, urgency);
   speakReminder(cls, minsLeft, urgency);
 }
 
@@ -1666,10 +1570,10 @@ function speakReminder(cls, minsLeft, urgency) {
 }
 
 function showDuoNotification(cls, minsLeft, urgency = 'normal') {
-  const icons = ['✨','💻','🔬','📐','🌐','⚙️','📊','🧪','🎓','📝'];
+  const icons = ['📚','💻','🔬','📐','🌐','⚙️','📊','🧪','🎓','📝'];
   const subjects = [...new Set(TIMETABLE.map(c => c.subject))];
   const idx = subjects.indexOf(cls.subject);
-  const ico = cls.type === 'task' ? '🚀' : icons[idx % icons.length];
+  const ico = icons[idx % icons.length];
   const color = cls.color || COLORS[idx % COLORS.length];
   const isUrgent = urgency === 'urgent';
   const firstName = USER?.name?.split(' ')[0] || 'Hey';
@@ -1681,18 +1585,12 @@ function showDuoNotification(cls, minsLeft, urgency = 'normal') {
   // Title
   const titleEl = Q('#duoTitle');
   if(titleEl) titleEl.textContent = isUrgent
-    ? `${cls.subject || cls.title} starts NOW, ${firstName}!`
-    : `${firstName}, ${cls.type === 'task' ? 'task' : 'class'} in ${minsLeft} min! 📣`;
+    ? `${cls.subject} starts NOW, ${firstName}!`
+    : `${firstName}, class in ${minsLeft} min! 📣`;
 
   // Sub
   const subEl = Q('#duoSub');
-  if(subEl) {
-    if (cls.type === 'task') {
-      subEl.textContent = cls.subject ? `📚 ${cls.subject}` : 'General Task';
-    } else {
-      subEl.textContent = (cls.room ? '📍 ' + cls.room : '') + (cls.prof ? ' · ' + cls.prof : '');
-    }
-  }
+  if(subEl) subEl.textContent = cls.subject + (cls.room ? ' · 📍 ' + cls.room : '') + (cls.prof ? ' · ' + cls.prof : '');
 
   // Badge
   const badge = Q('#duoTime');
@@ -1722,9 +1620,16 @@ function markAttendedFromNotif(){
   const cls = window._currentNotifCls;
   if(!cls) return;
   const subj = cls.subject;
+  const time = cls.time || 'notif';
+  // Prevent double-marking the same class session
+  if (isMarkedToday(subj, time)) {
+    toast('Already marked for this class! ✅');
+    return;
+  }
   if(!ATTENDANCE[subj]) ATTENDANCE[subj] = {present:0,absent:0,total:0};
   ATTENDANCE[subj].present++;
   XP += 10; STREAK++;
+  setMarkedToday(subj, time, 'p');
   LS.set('attendance',ATTENDANCE); LS.set('xp',XP); LS.set('streak',STREAK);
   toast('✅ Marked present! +10 XP 🔥');
   buildAttendance(); updateProfileStats();
@@ -1732,6 +1637,23 @@ function markAttendedFromNotif(){
 function dismissDuo() {
   Q('#duoNotif').classList.remove('show');
   clearTimeout(duoTimeout);
+}
+
+function sendBrowserNotif(cls, minsLeft, urgency) {
+  if (!Notification) return;
+  const doNotify = () => {
+    try {
+      const isUrgent = urgency === 'urgent';
+      const title = isUrgent ? '🔴 ' + cls.subject + ' — Starting NOW!' : '⏰ ' + cls.subject + ' in ' + minsLeft + ' min';
+      const body = (cls.room ? '📍 ' + cls.room : '') + (cls.prof ? ' · ' + cls.prof : '') + '\n🔥 Streak: ' + STREAK + ' days';
+      const icon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#5B4FCF"/><text y="46" x="10" font-size="40">📚</text></svg>');
+      new Notification(title, { body, icon, tag:'unitime-'+cls.subject+'-'+minsLeft, requireInteraction: isUrgent, silent:false });
+    } catch(e){}
+  };
+  if(Notification.permission === 'granted'){ doNotify(); }
+  else if(Notification.permission === 'default'){
+    Notification.requestPermission().then(p=>{ if(p==='granted') doNotify(); });
+  }
 }
 
 // ── Test notification (callable from profile) ──
@@ -1984,26 +1906,7 @@ function saveExtracted(){
 }
 
 // Manual class
-function openAddClassModal(){
-  window._editingClass=null;
-  Q('#addClassModal').classList.add('show');
-  const dbtn=Q('#ac-delete-btn');if(dbtn)dbtn.style.display='none';
-  Q('#addClassModal .m-title').textContent='Add Class Manually';
-  Q('#ac-subject').value='';Q('#ac-room').value='';Q('#ac-prof').value='';
-}
-function editClass(day, time, subject) {
-  const cls=TIMETABLE.find(c=>c.day===day&&c.time===time&&c.subject===subject);
-  if(!cls) return;
-  Q('#ac-subject').value=cls.subject;
-  Q('#ac-day').value=cls.day;
-  Q('#ac-time').value=cls.time;
-  Q('#ac-room').value=cls.room||'';
-  Q('#ac-prof').value=cls.prof||'';
-  window._editingClass=cls;
-  Q('#addClassModal .m-title').textContent='Edit Class';
-  const dbtn=Q('#ac-delete-btn');if(dbtn)dbtn.style.display='block';
-  Q('#addClassModal').classList.add('show');
-}
+function openAddClassModal(){Q('#addClassModal').classList.add('show');}
 function saveManualClass(){
   const subj=Q('#ac-subject').value.trim();
   if(!subj){toast('Enter a subject name');return;}
@@ -2015,32 +1918,15 @@ function saveManualClass(){
     time:Q('#ac-time').value||'09:00',
     room:Q('#ac-room').value.trim(),
     prof:Q('#ac-prof').value.trim(),
-    color:window._editingClass?window._editingClass.color:COLORS[colorIdx%COLORS.length]
+    color:COLORS[colorIdx%COLORS.length]
   };
-  if(window._editingClass){
-    const idx=TIMETABLE.findIndex(c=>c.day===window._editingClass.day&&c.time===window._editingClass.time&&c.subject===window._editingClass.subject);
-    if(idx>-1)TIMETABLE[idx]=cls;
-  }else{
-    TIMETABLE.push(cls);
-  }
+  TIMETABLE.push(cls);
   if(!ATTENDANCE[subj]) ATTENDANCE[subj]={present:0,absent:0,total:0};
   saveAll();
   buildWeekGrid();buildHome();buildAttendance();populateTaskSubjects();
   Q('#addClassModal').classList.remove('show');
   Q('#ac-subject').value='';Q('#ac-room').value='';Q('#ac-prof').value='';
-  toast(window._editingClass?'✏️ Class updated!':'✅ Class added!');
-}
-function deleteManualClass(){
-  if(!window._editingClass) return;
-  if(!confirm("Delete this class?")) return;
-  const idx=TIMETABLE.findIndex(c=>c.day===window._editingClass.day&&c.time===window._editingClass.time&&c.subject===window._editingClass.subject);
-  if(idx>-1){
-    TIMETABLE.splice(idx,1);
-    saveAll();
-    buildWeekGrid();buildHome();buildAttendance();populateTaskSubjects();
-    Q('#addClassModal').classList.remove('show');
-    toast('🗑️ Class deleted');
-  }
+  toast('✅ Class added!');
 }
 
 // Week grid
@@ -2056,11 +1942,7 @@ function buildWeekGrid(){
     ['MON','TUE','WED','THU','FRI'].forEach(day=>{
       const cls=TIMETABLE.find(c=>c.day===day&&formatTimeSlot(c.time)===t);
       const cell=document.createElement('div');
-      if(cls){
-        cell.className='wgc wgf';cell.style.background=cls.color||'#5B4FCF';cell.title=cls.subject;cell.textContent=abbrev(cls.subject);
-        cell.style.cursor='pointer';
-        cell.onclick=()=>editClass(cls.day,cls.time,cls.subject);
-      }
+      if(cls){cell.className='wgc wgf';cell.style.background=cls.color||'#5B4FCF';cell.title=cls.subject;cell.textContent=abbrev(cls.subject);}
       else{cell.className='wgc wge';}
       g.appendChild(cell);
     });
@@ -2082,6 +1964,7 @@ function buildAttendance(){
     return;
   }
   const goal=USER?.attGoal||75;
+  const todayDay = DAYS_SHORT[new Date().getDay()];
   subjects.forEach(s=>{
     if(!ATTENDANCE[s]) ATTENDANCE[s]={present:0,absent:0,total:0};
     const a=ATTENDANCE[s];
@@ -2097,6 +1980,10 @@ function buildAttendance(){
       canSkip>0?`✅ Can miss ${canSkip} more safely`:
       '✅ On track';
     const bClass=danger?'d':warn?'w':'';
+    // Check if any session of this subject today is already marked
+    const todaySessions = TIMETABLE.filter(cl => cl.subject === s && cl.day === todayDay);
+    const markedSession = todaySessions.find(cl => isMarkedToday(s, cl.time));
+    const markedType = markedSession ? MARKED_TODAY.entries[getMarkedKey(s, markedSession.time)] : null;
     const d=document.createElement('div');d.className='att-card';
     d.innerHTML=`
       <div class="att-top">
@@ -2104,11 +1991,7 @@ function buildAttendance(){
           <div class="att-sn">${s}</div>
           <div style="font-size:12px;color:var(--text2);font-weight:600;margin-top:2px">${TIMETABLE.find(c=>c.subject===s)?.prof||''}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="font-size:14px;cursor:pointer;opacity:0.5;transition:0.2s" onclick="editAttendance('${s.replace(/'/g,"\\'")}')" title="Edit Data">✏️</div>
-          <div style="font-size:14px;cursor:pointer;opacity:0.5;transition:0.2s" onclick="deleteAttendance('${s.replace(/'/g,"\\'")}')" title="Reset Subject">🗑️</div>
-          <div class="att-pct" style="color:${color};margin-left:4px">${total?pct+'%':'—'}</div>
-        </div>
+        <div class="att-pct" style="color:${color}">${total?pct+'%':'—'}</div>
       </div>
       <div class="att-pb"><div class="att-pf" style="width:${pct}%;background:${color}"></div></div>
       <div class="att-row"><span>${a.present} present · ${a.absent} absent · ${total} total</span></div>
@@ -2118,46 +2001,32 @@ function buildAttendance(){
         <button class="att-btn a" onclick="markA(this,'a','${s.replace(/'/g,"\\'")}')">❌ Absent</button>
       </div>`;
     c.appendChild(d);
+    // Apply marked-today state to buttons via DOM (reliable across reloads)
+    if (markedType) {
+      const btns = d.querySelectorAll('.att-btn');
+      btns.forEach(b => { b.disabled = true; b.style.opacity = '0.7'; });
+      const activeBtn = d.querySelector(markedType === 'p' ? '.att-btn.p' : '.att-btn.a');
+      if (activeBtn) { activeBtn.classList.add('on'); activeBtn.textContent += ' ✓'; }
+    }
   });
   updateProfileStats();
 }
-function editAttendance(subj) {
-  const a = ATTENDANCE[subj] || {present:0, absent:0};
-  const valInfo = prompt(`Format defaults to "Present / Absent". Enter two numbers separated by space or comma.\n\nEdit attendance for ${subj}:`, `${a.present} / ${a.absent}`);
-  if(!valInfo) return;
-  const m = valInfo.match(/(\d+)\D+(\d+)/);
-  if(m) {
-    ATTENDANCE[subj].present = parseInt(m[1])||0;
-    ATTENDANCE[subj].absent = parseInt(m[2])||0;
-  } else {
-    const p = parseInt(valInfo);
-    if(!isNaN(p)) ATTENDANCE[subj].present = p;
-  }
-  ATTENDANCE[subj].total = 0;
-  LS.set('attendance', ATTENDANCE); buildAttendance(); updateProfileStats();
-}
-function deleteAttendance(subj) {
-  if(!confirm(`Reset all attendance data for ${subj}?`)) return;
-  ATTENDANCE[subj] = {present:0, absent:0, total:0};
-  LS.set('attendance', ATTENDANCE); buildAttendance(); updateProfileStats();
-}
 function markA(btn,type,subj){
   if(!ATTENDANCE[subj]) ATTENDANCE[subj]={present:0,absent:0,total:0};
-  const sib=btn.parentElement.querySelector(type==='p'?'.a':'.p');
-  if(btn.classList.contains('on')){
-    btn.classList.remove('on');
-    if(type==='p') ATTENDANCE[subj].present=Math.max(0,ATTENDANCE[subj].present-1);
-    else ATTENDANCE[subj].absent=Math.max(0,ATTENDANCE[subj].absent-1);
-  } else {
-    if(sib.classList.contains('on')){
-      sib.classList.remove('on');
-      if(type==='p') ATTENDANCE[subj].absent=Math.max(0,ATTENDANCE[subj].absent-1);
-      else ATTENDANCE[subj].present=Math.max(0,ATTENDANCE[subj].present-1);
-    }
-    btn.classList.add('on');
-    if(type==='p'){ATTENDANCE[subj].present++;STREAK++;XP+=10;LS.set('streak',STREAK);LS.set('xp',XP);}
-    else ATTENDANCE[subj].absent++;
+  // Find today's class time for this subject
+  const todayDay = DAYS_SHORT[new Date().getDay()];
+  const todayCls = TIMETABLE.find(c => c.subject === subj && c.day === todayDay);
+  const time = todayCls ? todayCls.time : 'manual';
+  // Check if already marked today
+  if (isMarkedToday(subj, time)) {
+    toast('Already marked for today\'s ' + subj + '!');
+    return;
   }
+  const sib=btn.parentElement.querySelector(type==='p'?'.a':'.p');
+  btn.classList.add('on');
+  if(type==='p'){ATTENDANCE[subj].present++;STREAK++;XP+=10;LS.set('streak',STREAK);LS.set('xp',XP);}
+  else ATTENDANCE[subj].absent++;
+  setMarkedToday(subj, time, type);
   LS.set('attendance',ATTENDANCE);
   toast(type==='p'?'✅ Present marked! +10 XP':'❌ Absent marked');
   buildAttendance();
@@ -2175,14 +2044,7 @@ function populateTaskSubjects(){
 function renderTasks(){
   const p=Q('#tPending'),d=Q('#tDone');
   p.innerHTML='';d.innerHTML='';
-  let mergedTasks = [...TASKS];
-  if(COMMUNITY_DATA.tasks) {
-     COMMUNITY_DATA.tasks.forEach(ct => {
-        if(!mergedTasks.find(t => t.id === ct.id)) mergedTasks.push({...ct, isCommunity: true});
-     });
-  }
-  const pending=mergedTasks.filter(t=>!t.done);
-  const done=mergedTasks.filter(t=>t.done);
+  const pending=TASKS.filter(t=>!t.done),done=TASKS.filter(t=>t.done);
   pending.forEach(t=>p.appendChild(mkT(t)));
   done.forEach(t=>d.appendChild(mkT(t)));
   if(!pending.length) p.innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;font-size:14px;font-weight:700">🎉 All caught up!</div>';
@@ -2200,105 +2062,34 @@ function mkT(t){
     <div class="tchk ${t.done?'done':''}" onclick="toggleTask(${t.id})">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="ti-body" onclick="toggleTask(${t.id})">
+    <div class="ti-body">
       <div class="ti-t ${t.done?'done':''}">${t.title}</div>
       <div class="ti-m">
         ${t.subject?`<span>📚 ${t.subject}</span>`:''}
         <span>📅 ${t.due||'No date'}</span>
         ${t.time?`<span>⏰ ${to12h(t.time)}</span>`:''}
         <span class="ptag ${pc}">${pl}</span>
-        ${t.isCommunity?`<span style="margin-left:4px;color:var(--violet)">🌍 Shared</span>`:''}
       </div>
-    </div>
-    <div class="ti-acts">
-      ${t.isCommunity ? `<span style="font-size:11px;color:var(--text3);padding:4px">🌍</span>` :
-      `<button class="ti-btn" onclick="editTask(${t.id}, event)" title="Edit">✏️</button>
-      <button class="ti-btn" onclick="deleteTask(${t.id}, event)" title="Delete" style="color:var(--red)">🗑️</button>`}
     </div>`;
   return d;
 }
 function toggleTask(id){
-  let t=TASKS.find(x=>x.id===id);
-  if(!t && COMMUNITY_DATA.tasks) {
-     const ct = COMMUNITY_DATA.tasks.find(x=>x.id===id);
-     if(ct) { t = {...ct, done: false}; TASKS.push(t); }
-  }
-  if(!t) return;
+  const t=TASKS.find(x=>x.id===id);if(!t) return;
   t.done=!t.done;
   if(t.done){XP+=20;LS.set('xp',XP);}
-  else if(XP>=20){XP-=20;LS.set('xp',XP);}
   LS.set('tasks',TASKS);renderTasks();
   toast(t.done?'✅ Task done! +20 XP':'↩️ Task reopened');
 }
-function openModal(){
-  populateTaskSubjects();
-  Q('#tTitle').value='';
-  Q('#tDue').value='';
-  Q('#tTime').value='';
-  Q('#tPri').value='m';
-  delete window.editingTaskId;
-  Q('#taskModal').classList.add('show');
-}
+function openModal(){populateTaskSubjects();Q('#taskModal').classList.add('show');}
 function closeModal(id,e){if(e.target===Q('#'+id)) Q('#'+id).classList.remove('show');}
-
-function editTask(id, e) {
-  e.stopPropagation();
-  const t = TASKS.find(x => x.id === id);
-  if(!t) return;
-  populateTaskSubjects();
-  Q('#tTitle').value = t.title;
-  Q('#tSubject').value = t.subject || '';
-  Q('#tDue').value = t.due || '';
-  Q('#tTime').value = t.time || '';
-  Q('#tPri').value = t.pri || 'm';
-  window.editingTaskId = id;
-  Q('#taskModal').classList.add('show');
-}
-
-function deleteTask(id, e) {
-  e.stopPropagation();
-  if(!confirm("Are you sure you want to delete this task?")) return;
-  const idx = TASKS.findIndex(x => x.id === id);
-  if(idx > -1) {
-    if(!TASKS[idx].done && XP >= 5) { XP -= 5; LS.set('xp', XP); } // penalize deleting pending task slightly
-    TASKS.splice(idx, 1);
-    LS.set('tasks', TASKS);
-    renderTasks();
-    toast('🗑️ Task deleted');
-  }
-}
-
 function saveTask(){
   const title=Q('#tTitle').value.trim();
   if(!title){toast('Enter a task title');return;}
-  
-  let newTask = null;
-  if (window.editingTaskId) {
-    const t = TASKS.find(x => x.id === window.editingTaskId);
-    if(t) {
-      t.title = title;
-      t.subject = Q('#tSubject').value.trim();
-      t.due = Q('#tDue').value || '';
-      t.time = Q('#tTime').value || '';
-      t.pri = Q('#tPri').value;
-    }
-    toast('✏️ Task updated!');
-  } else {
-    newTask = {id:Date.now(),title,subject:Q('#tSubject').value.trim(),due:Q('#tDue').value||'',time:Q('#tTime').value||'',pri:Q('#tPri').value,done:false};
-    TASKS.push(newTask);
-    toast('✅ Task added!');
-  }
-  
-  LS.set('tasks',TASKS);
-  renderTasks();
-  scheduleTaskReminders();
-  
-  const shareChk = Q('#tShareComm');
-  if(newTask && shareChk && shareChk.checked) shareTaskToCommunity(newTask);
-  if(shareChk) shareChk.checked = false;
-  
+  TASKS.push({id:Date.now(),title,subject:Q('#tSubject').value.trim(),due:Q('#tDue').value||'',time:Q('#tTime').value||'',pri:Q('#tPri').value,done:false});
+  LS.set('tasks',TASKS);renderTasks();scheduleTaskReminders();
   Q('#taskModal').classList.remove('show');
   Q('#tTitle').value='';Q('#tDue').value='';Q('#tTime').value='';
+  toast('✅ Task added!');
 }
 
 // ── (Chat removed — replaced by Notes) ──
@@ -2349,13 +2140,7 @@ function renderNotes(){
     const timeStr=new Date(n.id).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
     const preview=n.content.length>150?n.content.slice(0,150)+'…':n.content;
     d.innerHTML=`
-      <div class="nc-top">
-        <div class="nc-title">${n.title}</div>
-        <div style="display:flex;gap:4px">
-          <button class="nc-del" onclick="event.stopPropagation();editNote(${n.id})">✏️</button>
-          <button class="nc-del" onclick="event.stopPropagation();deleteNote(${n.id})">🗑️</button>
-        </div>
-      </div>
+      <div class="nc-top"><div class="nc-title">${n.title}</div><button class="nc-del" onclick="event.stopPropagation();deleteNote(${n.id})">🗑️</button></div>
       ${n.image?`<img class="nc-img" src="${n.image}" alt="note image"/>`:'' }
       <div class="nc-body">${preview}</div>
       <div class="nc-meta">
@@ -2372,30 +2157,7 @@ function openNoteModal(){
   Q('#nTitle').value='';Q('#nContent').value='';
   const preview=Q('#noteImgPreview');if(preview){preview.style.display='none';preview.src='';}
   _noteImgData=null;
-  window.editingNoteId = null;
   Q('#noteModal').classList.add('show');
-}
-
-function editNote(id){
-  const n = NOTES.find(x => x.id === id);
-  if(!n) return;
-  populateNoteSubjects();
-  Q('#nTitle').value = n.title || '';
-  Q('#nContent').value = n.content || '';
-  Q('#nSubject').value = n.subject || '';
-  const preview = Q('#noteImgPreview');
-  if(n.image) {
-    _noteImgData = n.image;
-    preview.src = n.image;
-    preview.style.display = 'block';
-  } else {
-    _noteImgData = null;
-    preview.style.display = 'none';
-    preview.src = '';
-  }
-  window.editingNoteId = id;
-  Q('#noteModal').classList.add('show');
-  closeNoteDetail();
 }
 
 function previewNoteImg(e){
@@ -2550,8 +2312,9 @@ function cleanOCRText(data) {
 async function scanNoteImg(e){
   const file=e.target.files[0];if(!file)return;e.target.value='';
   const status=Q('#noteScanStatus');
-  if(status){status.style.display='block';status.textContent='\ud83d\udd0d Preparing image...';}
+  if(status){status.style.display='block';status.textContent='\ud83d\udd0d Preprocessing image for better accuracy...';}
   try{
+    if(typeof Tesseract==='undefined') throw new Error('OCR engine not loaded \u2014 check internet and refresh');
     // Attach the original image as preview
     const reader2=new FileReader();
     reader2.onload=ev2=>{
@@ -2569,36 +2332,25 @@ async function scanNoteImg(e){
     };
     reader2.readAsDataURL(file);
 
-    let text = "";
-    if (getApiKey()) {
-      if(status) status.textContent='\ud83d\udd0d Gemini AI scanning text...';
-      const base64 = await fileToBase64(file);
-      const ext = file.name.split('.').pop().toLowerCase();
-      const mediaType = file.type || (ext === 'pdf' ? 'application/pdf' : 'image/jpeg');
-      const prompt = "Please transcribe the handwritten or printed text in this note as accurately as possible. Output ONLY the transcribed text. Do not add any conversational filler. Maintain line breaks and formatting.";
-      text = await callGeminiWithImage(base64, mediaType, prompt);
-    } else {
-      if(typeof Tesseract==='undefined') throw new Error('OCR engine not loaded \u2014 check internet and refresh');
-      // Step 1: Preprocess image for better OCR
-      if(status) status.textContent='\ud83d\udd0d Enhancing image quality...';
-      const processedBlob = await preprocessImageForOCR(file);
+    // Step 1: Preprocess image for better OCR
+    if(status) status.textContent='\ud83d\udd0d Enhancing image quality...';
+    const processedBlob = await preprocessImageForOCR(file);
 
-      // Step 2: Run OCR on preprocessed image
-      if(status) status.textContent='\ud83d\udd0d Running Tesseract OCR...';
-      const {data}=await Tesseract.recognize(processedBlob,'eng',{
-        logger:m=>{
-          if(m.status==='recognizing text'&&status){
-            status.textContent='\ud83d\udd0d Recognizing text... '+Math.round(m.progress*100)+'%';
-          }
-          if(m.status==='loading language traineddata'&&status){
-            status.textContent='\ud83d\udce5 Loading OCR engine (one-time)...';
-          }
+    // Step 2: Run OCR on preprocessed image
+    if(status) status.textContent='\ud83d\udd0d Running OCR on enhanced image...';
+    const {data}=await Tesseract.recognize(processedBlob,'eng',{
+      logger:m=>{
+        if(m.status==='recognizing text'&&status){
+          status.textContent='\ud83d\udd0d Recognizing text... '+Math.round(m.progress*100)+'%';
         }
-      });
+        if(m.status==='loading language traineddata'&&status){
+          status.textContent='\ud83d\udce5 Loading OCR engine (one-time)...';
+        }
+      }
+    });
 
-      // Step 3: Clean up OCR text with confidence filtering
-      text = cleanOCRText(data);
-    }
+    // Step 3: Clean up OCR text with confidence filtering
+    const text = cleanOCRText(data);
 
     if(!text||text.length<3){
       if(status){status.textContent='\u274c Could not read text. Try a clearer, well-lit photo.';setTimeout(()=>{status.style.display='none';},3000);}
@@ -2616,8 +2368,9 @@ async function scanNoteImg(e){
       titleEl.value=(firstLine||'').trim().slice(0,50)||'Scanned Note';
     }
     const wordCount = text.split(/\s+/).filter(Boolean).length;
-    if(status){status.textContent='\u2705 Extracted '+wordCount+' words';setTimeout(()=>{status.style.display='none';},5000);}
-    toast('\u2705 OCR: '+wordCount+' words extracted');
+    const avgConf = data.words?.length ? Math.round(data.words.reduce((s,w) => s+(w.confidence||0), 0) / data.words.length) : 0;
+    if(status){status.textContent='\u2705 Extracted '+wordCount+' words ('+avgConf+'% avg confidence)';setTimeout(()=>{status.style.display='none';},5000);}
+    toast('\u2705 OCR: '+wordCount+' words extracted ('+avgConf+'% confidence)');
   }catch(err){
     console.error('Note OCR error:',err);
     if(status){status.textContent='\u274c '+(err.message||'Scan failed');setTimeout(()=>{status.style.display='none';},3000);}
@@ -2628,32 +2381,19 @@ function saveNote(){
   const title=Q('#nTitle').value.trim();
   const content=Q('#nContent').value.trim();
   if(!title&&!content){toast('Enter a title or content');return;}
-  
-  if (window.editingNoteId) {
-    const n = NOTES.find(x => x.id === window.editingNoteId);
-    if(n) {
-      n.title = title || 'Untitled Note';
-      n.content = content;
-      n.subject = Q('#nSubject').value.trim();
-      n.image = _noteImgData || null;
-    }
-    toast('✏️ Note updated!');
-  } else {
-    NOTES.push({
-      id:Date.now(),
-      title:title||'Untitled Note',
-      content:content,
-      subject:Q('#nSubject').value.trim(),
-      image:_noteImgData||null
-    });
-    XP+=5;LS.set('xp',XP);
-    toast('📝 Note saved! +5 XP');
-  }
+  NOTES.push({
+    id:Date.now(),
+    title:title||'Untitled Note',
+    content:content,
+    subject:Q('#nSubject').value.trim(),
+    image:_noteImgData||null
+  });
   LS.set('notes',NOTES);
   Q('#noteModal').classList.remove('show');
   _noteImgData=null;
-  window.editingNoteId = null;
   renderNotes();buildNoteFilters();
+  XP+=5;LS.set('xp',XP);
+  toast('📝 Note saved! +5 XP');
 }
 
 function deleteNote(id){
@@ -2677,7 +2417,6 @@ function openNoteDetail(id){
   const img=Q('#ndImg');
   if(n.image){img.src=n.image;img.style.display='block';}else{img.style.display='none';}
   Q('#ndBody').textContent=n.content;
-  const editBtn=Q('#ndEditBtn'); if(editBtn) editBtn.onclick = () => editNote(id);
   Q('#noteDetail').classList.add('show');
 }
 
@@ -2776,7 +2515,6 @@ function saveProfile(){
   USER.college=Q('#ep-college').value.trim()||USER.college;
   USER.course=Q('#ep-course').value.trim()||USER.course;
   LS.set('user',USER);applyUser();
-  syncUserToCommunity();
   Q('#editModal').classList.remove('show');
   toast('✅ Profile updated!');
 }
@@ -2814,18 +2552,11 @@ function handlePicUpload(e){
   };
   reader.readAsDataURL(file);
 }
-function getShareCode(){
-  let code = LS.get('shareCode');
-  if (code) return code;
-  if (!TIMETABLE.length) return null;
-  const payload = JSON.stringify(TIMETABLE);
-  code = 'UNI-' + btoa(unescape(encodeURIComponent(payload)));
-  LS.set('shareCode', code);
-  return code;
-}
 function openShareModal(){
-  const code = getShareCode();
-  if(!code){toast('⚠️ No timetable to share yet!');return;}
+  if(!TIMETABLE.length){toast('⚠️ No timetable to share yet!');return;}
+  const payload=JSON.stringify(TIMETABLE);
+  const encoded=btoa(unescape(encodeURIComponent(payload)));
+  const code='UNI-'+encoded;
   const el=document.getElementById('shareCodeDisplay');
   if(el) el.textContent=code;
   document.getElementById('shareModal').classList.add('show');
@@ -2869,12 +2600,10 @@ function importTimetableFromCode(){
     });
     const subjects=[...new Set(TIMETABLE.map(c=>c.subject))];
     subjects.forEach(s=>{if(!ATTENDANCE[s]) ATTENDANCE[s]={present:0,absent:0,total:0};});
-    LS.set('shareCode', raw);
     saveAll();buildWeekGrid();buildHome();buildAttendance();populateTaskSubjects();
     closeModal2('importModal');
     toast('✅ Imported '+classes.length+' classes ('+(added>0?added+' new':'all already present')+')!');
     show('s-home','n-home');
-    fetchCommunityData();
   } catch(e){
     showErr('Invalid or corrupted code. Ask your classmate to reshare.');
   }
@@ -3481,7 +3210,7 @@ function toast(msg){
 
 // Set your push server URL after deploying Cloudflare Worker
 // Leave empty to use local-only SW fallback (no background push)
-const PUSH_SERVER_URL = localStorage.getItem('ut_push_url') || 'https://unitime-push.tanujmann1494.workers.dev';
+const PUSH_SERVER_URL = localStorage.getItem('ut_push_url') || '';
 
 async function setupPushNotifications() {
   if (!('serviceWorker' in navigator)) return;
@@ -3500,7 +3229,7 @@ async function setupPushNotifications() {
       setTimeout(() => syncScheduleToSW(), 1000);
     }
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      setTimeout(() => syncScheduleToSW(), 1000);
+      setTimeout(() => { syncScheduleToSW(); syncScheduleToPushServer(); }, 1000);
     });
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data?.action === 'NOTIFICATION_CLICKED') {
@@ -3510,6 +3239,23 @@ async function setupPushNotifications() {
       }
     });
     if (PUSH_SERVER_URL) await subscribeToPush(reg);
+    // Register Periodic Background Sync (Android Chrome)
+    // Wakes SW periodically even when app is fully closed
+    try {
+      if ('periodicSync' in reg) {
+        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+        if (status.state === 'granted') {
+          await reg.periodicSync.register('unitime-check-reminders', { minInterval: 12 * 60 * 60 * 1000 });
+          console.log('Periodic background sync registered');
+        }
+      }
+    } catch (e) { /* periodicSync not supported on this browser */ }
+    // Register one-time Background Sync as fallback
+    try {
+      if ('sync' in reg) {
+        await reg.sync.register('unitime-sync-reminders');
+      }
+    } catch (e) { /* sync not supported */ }
   } catch (err) {
     console.warn('SW setup error:', err);
   }
@@ -3548,35 +3294,12 @@ async function subscribeToPush(registration) {
 
 function syncScheduleToPushServer() {
   if (!PUSH_SERVER_URL) return;
-  const now = new Date();
-  const today = DAYS_SHORT[now.getDay()];
-  const classReminders = [];
-  TIMETABLE.filter(c => c.day === today).forEach(cls => {
-    const [h, m] = (cls.time || '09:00').split(':').map(Number);
-    const cd = new Date(now); cd.setHours(h, m, 0, 0);
-    [30, 15, 10, 5, 1].forEach(mins => {
-      const fireAt = cd.getTime() - mins * 60 * 1000;
-      if (fireAt > now.getTime() + 5000) {
-        classReminders.push({ type:'class', fireAt, subject:cls.subject, room:cls.room||'', prof:cls.prof||'', minsLeft:mins, urgency: mins<=1?'urgent':'normal' });
-      }
-    });
-  });
-  const taskReminders = [];
-  TASKS.filter(t => !t.done && t.due && t.time).forEach(task => {
-    const td = new Date(task.due + 'T' + task.time + ':00');
-    if (isNaN(td.getTime())) return;
-    [30, 15, 5, 0].forEach(mins => {
-      const fireAt = td.getTime() - mins * 60 * 1000;
-      if (fireAt > now.getTime() + 5000) {
-        taskReminders.push({ type:'task', fireAt, title:task.title, subject:task.subject||'', pri:task.pri||'m', minsLeft:mins, urgency: mins<=0?'urgent':'normal' });
-      }
-    });
-  });
+  const { classReminders, taskReminders } = buildWeekReminders();
   fetch(PUSH_SERVER_URL + '/api/sync', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ classReminders, taskReminders, userName: USER?.name?.split(' ')[0] || '', streak: STREAK || 0 })
-  }).then(r => r.json()).then(d => console.log('Schedule synced:', d.count, 'reminders')).catch(err => console.warn('Push sync error:', err));
+  }).then(r => r.json()).then(d => console.log('Schedule synced to push server:', d.count, 'reminders for 7 days')).catch(err => console.warn('Push sync error:', err));
 }
 
 function urlBase64ToUint8Array(base64String) {
@@ -3588,186 +3311,7 @@ function urlBase64ToUint8Array(base64String) {
   return out;
 }
 
-// ── COMMUNITY & GAMIFICATION ──
-let COMMUNITY_DATA = { leaderboard: [], tasks: [] };
-
-async function fetchCommunityData() {
-  const code = getShareCode();
-  if (!code) return;
-  try {
-    const res = await fetch(PUSH_SERVER_URL + '/api/community?code=' + encodeURIComponent(code));
-    if(res.ok) {
-      COMMUNITY_DATA = await res.json();
-      renderLeaderboard();
-      const tbody = Q('#tBody'); if(tbody) renderTasks(); // refresh if active
-    }
-  } catch (e) { console.error('Community fetch error:', e); }
-}
-
-async function syncUserToCommunity() {
-  const code = getShareCode();
-  if (!code || !USER) return;
-  if (!USER.id) { USER.id = 'u_' + Date.now() + Math.random().toString(36).slice(2); LS.set('user', USER); }
-  
-  const userPayload = { id: USER.id, name: USER.name || 'Anonymous', pic: USER.pic || null, xp: XP, streak: STREAK };
-  try {
-    const res = await fetch(PUSH_SERVER_URL + '/api/community', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'update_user', code, user: userPayload })
-    });
-    if(res.ok){
-      const data = await res.json();
-      if(data.data) { COMMUNITY_DATA = data.data; renderLeaderboard(); }
-    }
-  } catch (e) { console.error('Community sync error:', e); }
-}
-
-async function shareTaskToCommunity(task) {
-  const code = getShareCode();
-  if (!code) return;
-  try {
-    const t = {...task, createdAt: Date.now(), authorId: USER?.id};
-    const res = await fetch(PUSH_SERVER_URL + '/api/community', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'add_task', code, task: t })
-    });
-    if(res.ok){
-      const data = await res.json();
-      if(data.data) { COMMUNITY_DATA = data.data; renderTasks(); }
-      toast('🌍 Task shared with class!');
-    }
-  } catch(e) { console.error('Community task error:', e); }
-}
-
-function renderLeaderboard() {
-  const list = Q('#leaderboardList');
-  if(!list) return;
-  if(!getShareCode()) {
-    list.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">Share or import a timetable to join the leaderboard!</div>';
-    return;
-  }
-  if(!COMMUNITY_DATA.leaderboard || COMMUNITY_DATA.leaderboard.length === 0) {
-    list.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:13px;padding:20px">No classmates here yet. Share your code!</div>';
-    return;
-  }
-  list.innerHTML = COMMUNITY_DATA.leaderboard.map((u, i) => `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
-      <div style="font-size:16px;font-weight:900;color:var(--text3);width:20px;text-align:center">${i===0?'🏆':i===1?'🥈':i===2?'🥉':i+1}</div>
-      <div style="width:40px;height:40px;border-radius:50%;background:var(--vl);color:var(--violet);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;overflow:hidden">
-        ${u.pic ? `<img src="${u.pic}" style="width:100%;height:100%;object-fit:cover"/>` : (u.name?u.name[0].toUpperCase():'S')}
-      </div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:800;color:var(--text1)">${u.name || 'Student'} ${u.id === USER?.id ? '<span style="color:var(--violet)">(You)</span>':''}</div>
-        <div style="font-size:12px;color:var(--text2);font-weight:700">Streak: 🔥 ${u.streak||0}</div>
-      </div>
-      <div style="font-weight:900;color:var(--violet);font-size:15px;text-align:right">${u.xp||0}<br><span style="font-size:10px;color:var(--text3)">XP</span></div>
-    </div>
-  `).join('');
-}
-
-// ── ZEN MODE ──
-let zenInterval = null, zenMins = 25, zenSecs = 0;
-function startZenMode(){
-  zenMins = 25; zenSecs = 0;
-  Q('#zenTimer').textContent = '25:00';
-  Q('#zenOverlay').classList.add('active');
-  zenInterval = setInterval(zenTick, 1000);
-}
-function zenTick(){
-  if(zenMins === 0 && zenSecs === 0){
-    clearInterval(zenInterval);
-    Q('#zenOverlay').classList.remove('active');
-    XP += 25; LS.set('xp', XP);
-    syncUserToCommunity(); updateProfileStats();
-    toast('🧘 Zen complete! +25 XP');
-    return;
-  }
-  if(zenSecs === 0) { zenMins--; zenSecs = 59; }
-  else { zenSecs--; }
-  Q('#zenTimer').textContent = String(zenMins).padStart(2,'0') + ':' + String(zenSecs).padStart(2,'0');
-}
-function exitZenMode(){
-  if(confirm("Exit Zen Mode? You will lose out on the XP reward!")){
-    clearInterval(zenInterval);
-    Q('#zenOverlay').classList.remove('active');
-    const bgm=Q('#lofiAudio');
-    if(bgm && !bgm.paused) toggleLofi();
-  }
-}
-
-// ── LOFI PLAYER ──
-function toggleLofi() {
-  const audio = Q('#lofiAudio');
-  const btn = Q('#lofiPlayBtn');
-  const status = Q('#lofiStatus');
-  if(!audio) return;
-  if(audio.paused) {
-    audio.play().then(() => {
-      btn.innerHTML = '⏸';
-      status.textContent = 'Playing';
-      status.style.color = '#06C270';
-    }).catch(e => {
-      console.warn("Audio play failed:", e);
-      toast("Could not play audio. Check connection.");
-    });
-  } else {
-    audio.pause();
-    btn.innerHTML = '▶';
-    status.textContent = 'Paused';
-    status.style.color = 'rgba(255,255,255,0.5)';
-  }
-}
-function changeLofiVolume(val) {
-  const audio = Q('#lofiAudio');
-  if(audio) audio.volume = val;
-}
-
-// ── SWIPE NAVIGATION GESTURES ──
-let _tsX = 0, _tsY = 0;
-document.addEventListener('touchstart', e => {
-  _tsX = e.touches[0].clientX;
-  _tsY = e.touches[0].clientY;
-}, {passive:true});
-
-document.addEventListener('touchend', e => {
-  // Ignore swipe on horizontally scrollable areas
-  if(e.target.closest('.crs-row') || e.target.closest('.day-strip') || e.target.closest('.ob-wrap')) return;
-
-  const diffX = _tsX - e.changedTouches[0].clientX;
-  const diffY = _tsY - e.changedTouches[0].clientY;
-
-  // Ignore if mostly vertical (scrolling) or distance too short
-  if (Math.abs(diffY) > 40 && Math.abs(diffY) > Math.abs(diffX) * 0.5) return;
-  if (Math.abs(diffX) < 60) return;
-
-  const screens = ['s-home', 's-timetable', 's-notes', 's-att', 's-tasks'];
-  const navs = ['n-home', 'n-sched', 'n-notes', 'n-att', 'n-tasks'];
-  
-  const activeScreen = document.querySelector('.screen.active');
-  if(!activeScreen) return;
-  const activeId = activeScreen.id;
-  
-  if (activeId === 's-profile') {
-     if (diffX < 0) show('s-home', 'n-home'); // Swipe right on profile goes home
-     return;
-  }
-  
-  let idx = screens.indexOf(activeId);
-  if(idx === -1) return;
-
-  if (diffX > 0) {
-    if (idx < screens.length - 1) show(screens[idx+1], navs[idx+1]);
-  } else {
-    if (idx > 0) show(screens[idx-1], navs[idx-1]);
-  }
-}, {passive:true});
-
-window.addEventListener('load', () => {
-  setupPushNotifications();
-  setTimeout(() => fetchCommunityData(), 1500);
-});
+window.addEventListener('load', () => setupPushNotifications());
 
 </script>
 </body>
